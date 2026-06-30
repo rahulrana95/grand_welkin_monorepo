@@ -1,0 +1,67 @@
+load("@aspect_rules_ts//ts:proto.bzl", "ts_proto_library")
+load("@rules_buf//buf:defs.bzl", "buf_breaking_test", "buf_lint_test")
+load("@rules_go//proto:def.bzl", "go_proto_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_python//python/proto:py_proto_library.bzl", "py_proto_library")
+
+# === THE SINGLE SOURCE OF TRUTH ===========================================
+# One proto_library; every language's generated code hangs off it. A change to
+# cart.proto changes this target's inputs, which transitively invalidates every
+# *_proto_library below and everything that deps on them — and nothing else.
+proto_library(
+    name = "cart_proto",
+    srcs = ["cart.proto"],
+    visibility = ["//visibility:public"],
+    deps = ["@protovalidate//buf/validate:validate_proto"],
+)
+
+# === TypeScript (Protobuf-ES + Connect-ES) ================================
+# Consumed by TS targets via deps = ["//proto/acme/cart/v1:cart_ts_proto"].
+# copy_files=True materializes the generated .d.ts into the source tree so the
+# editor/IDE sees the types (they otherwise live under bazel-out/).
+ts_proto_library(
+    name = "cart_ts_proto",
+    node_modules = "//:node_modules",
+    proto = ":cart_proto",
+    gen_connect_es = True,
+    copy_files = True,
+    visibility = ["//visibility:public"],
+)
+
+# === Go ====================================================================
+go_proto_library(
+    name = "cart_go_proto",
+    importpath = "github.com/grand-welkin/monorepo/proto/acme/cart/v1",
+    proto = ":cart_proto",
+    visibility = ["//visibility:public"],
+)
+
+# === Python ================================================================
+py_proto_library(
+    name = "cart_py_proto",
+    deps = [":cart_proto"],
+    visibility = ["//visibility:public"],
+)
+
+# === Java ==================================================================
+# java_proto_library is built into Bazel / provided by protobuf.
+java_proto_library(
+    name = "cart_java_proto",
+    visibility = ["//visibility:public"],
+    deps = [":cart_proto"],
+)
+
+# === API governance (rules_buf): lint + breaking-change as Bazel tests ======
+# `bazel test //proto/...` enforces style and blocks incompatible schema edits,
+# in addition to the buf.yml GitHub workflow.
+buf_lint_test(
+    name = "cart_proto_lint",
+    targets = [":cart_proto"],
+)
+
+buf_breaking_test(
+    name = "cart_proto_breaking",
+    # Baseline image of the previous API; generated in CI from the merge base.
+    against = "@buf_against//:image",
+    targets = [":cart_proto"],
+)

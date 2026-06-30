@@ -32,3 +32,9 @@ right layer, then open the specific skill.
 | [`testing-e2e-playwright`](./testing-e2e-playwright/SKILL.md) | E2E against an actual backend — Playwright (+ `playwright-bdd`), data lifecycle, `storageState` auth, anti-flakiness |
 | [`testing-visual-storybook-argos`](./testing-visual-storybook-argos/SKILL.md) | visual regression with a PR approve/reject UI — Storybook stories + Argos (Chromatic = managed alt) |
 | [`testing-visual-playwright`](./testing-visual-playwright/SKILL.md) | lean, no-SaaS visual regression — Playwright `toHaveScreenshot`, git baselines reviewed in the PR |
+
+## Monorepo architecture
+
+| Skill | Loads when… |
+|---|---|
+| [`monorepo-architecture`](./monorepo-architecture/SKILL.md) | adding a project/package, wiring a Protobuf schema or consumer, editing `BUILD.bazel`/`MODULE.bazel`/Buf config — the **Bazel + Gazelle + Buf** stack with Protobuf as the single source of truth (see [ADR 0001](../../docs/adr/0001-monorepo-build-system.md)) |

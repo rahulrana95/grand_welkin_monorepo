@@ -1,0 +1,25 @@
+{
+  "name": "grand-welkin-monorepo",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "gazelle": "bazel run //:gazelle",
+    "build": "bazel build //...",
+    "test": "bazel test //...",
+    "proto:gen": "buf generate",
+    "proto:lint": "buf lint",
+    "proto:breaking": "buf breaking --against '.git#branch=main'",
+    "dev:web": "pnpm --filter @acme/cart-demo dev"
+  },
+  "devDependencies": {
+    "@bufbuild/buf": "^1.47.2",
+    "@bufbuild/protobuf": "^2.2.3",
+    "@bufbuild/protoc-gen-es": "^2.2.3",
+    "@connectrpc/connect": "^2.0.0",
+    "@connectrpc/protoc-gen-connect-es": "^1.6.1",
+    "typescript": "^5.7.2"
+  }
+}

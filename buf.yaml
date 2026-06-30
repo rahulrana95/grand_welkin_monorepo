@@ -1,0 +1,18 @@
+# Buf v2 — proto governance for the single-source-of-truth schema.
+# `buf lint` and `buf breaking` run on every PR (see .github/workflows/buf.yml)
+# and as Bazel tests via rules_buf.
+version: v2
+modules:
+  - path: proto
+deps:
+  - buf.build/bufbuild/protovalidate   # field/message validation options
+lint:
+  use:
+    - STANDARD
+  except:
+    # Our layout is proto/<domain>/<version>/...; we don't duplicate the package
+    # path under an extra directory, so relax this one rule.
+    - PACKAGE_DIRECTORY_MATCH
+breaking:
+  use:
+    - FILE   # strictest practical category; blocks source/wire/JSON-incompatible edits
