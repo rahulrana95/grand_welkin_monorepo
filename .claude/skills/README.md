@@ -16,3 +16,19 @@ folder as a `SKILL.md` with frontmatter; Claude Code auto-loads a skill when its
 
 The skills cross-reference each other; `react-typescript` builds on the three core
 TypeScript skills.
+
+## Testing (React + TypeScript)
+
+A layered strategy whose single goal is to **detect breaking changes and UI
+regressions early** — each bug caught by the fastest, cheapest layer that can see it.
+**Start at [`testing-strategy`](./testing-strategy/SKILL.md)** to route a change to the
+right layer, then open the specific skill.
+
+| Skill | Loads when… |
+|---|---|
+| [`testing-strategy`](./testing-strategy/SKILL.md) | deciding *which* test to write, setting up the stack, or reviewing coverage across layers (the map) |
+| [`testing-unit-vitest-rtl`](./testing-unit-vitest-rtl/SKILL.md) | unit/component tests — Vitest + RTL, BDD style (optional Gherkin via `vitest-cucumber`) |
+| [`testing-integration-msw`](./testing-integration-msw/SKILL.md) | integration tests — real component trees with the network mocked at the boundary via MSW v2 |
+| [`testing-e2e-playwright`](./testing-e2e-playwright/SKILL.md) | E2E against an actual backend — Playwright (+ `playwright-bdd`), data lifecycle, `storageState` auth, anti-flakiness |
+| [`testing-visual-storybook-argos`](./testing-visual-storybook-argos/SKILL.md) | visual regression with a PR approve/reject UI — Storybook stories + Argos (Chromatic = managed alt) |
+| [`testing-visual-playwright`](./testing-visual-playwright/SKILL.md) | lean, no-SaaS visual regression — Playwright `toHaveScreenshot`, git baselines reviewed in the PR |
