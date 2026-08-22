@@ -1,0 +1,25 @@
+name: Buf (proto)
+
+# Governs the single-source-of-truth schema on every PR: lint, format, and
+# (critically) breaking-change detection against main. A backwards-incompatible
+# proto edit fails here and cannot merge.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  buf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-action@v1
+        with:
+          # Runs build, lint, format, and breaking (against the merge base).
+          # Set BUF_TOKEN only if you push modules to the BSR.
+          token: ${{ secrets.BUF_TOKEN }}

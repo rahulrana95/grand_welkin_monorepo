@@ -1,0 +1,28 @@
+# Bazel configuration for the polyglot monorepo.
+# See docs/adr/0001-monorepo-build-system.md for the rationale.
+
+# --- bzlmod (modern external deps; replaces WORKSPACE) ---
+common --enable_bzlmod
+
+# --- Correctness / hermeticity ---
+# Sandboxing is what makes remote cache hits trustworthy across machines.
+build --incompatible_strict_action_env
+build --sandbox_default_allow_network=false
+
+# --- Performance ---
+build --jobs=auto
+build --remote_download_minimal          # don't pull intermediate outputs locally
+test  --test_output=errors
+build --noshow_progress_rate_limit=5
+
+# --- Remote cache (THE lever that makes "Blaze fast" real) ---
+# Point CI *and* developer laptops at the same cache so a green CI build
+# warms everyone's local builds. Uncomment and set your endpoint:
+#   BuildBuddy:    --remote_cache=grpcs://remote.buildbuddy.io --remote_header=x-buildbuddy-api-key=$BB_KEY
+#   Self-hosted:   --remote_cache=grpc://your-bazel-remote:9092
+# build --remote_cache=
+# build --bes_results_url=https://app.buildbuddy.io/invocation/
+# build --bes_backend=grpcs://remote.buildbuddy.io
+
+# --- Per-developer overrides (gitignored) ---
+try-import %workspace%/.bazelrc.user

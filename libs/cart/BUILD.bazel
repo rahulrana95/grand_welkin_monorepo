@@ -1,0 +1,53 @@
+load("@aspect_rules_js//js:defs.bzl", "js_test")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+
+npm_link_all_packages(name = "node_modules")
+
+# The TS library. The deps edge to the generated proto target is what makes a
+# .proto change propagate here automatically: edit cart.proto -> cart_ts_proto
+# regenerates -> this ts_project re-type-checks -> its test re-runs. Everything
+# else in the repo stays a cache hit.
+ts_project(
+    name = "cart",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = ["src/**/*.test.ts"],
+    ),
+    declaration = True,
+    tsconfig = "//:tsconfig",
+    transpiler = "tsc",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":node_modules/@bufbuild/protobuf",
+        "//proto/acme/cart/v1:cart_ts_proto",  # <-- generated types
+    ],
+)
+
+ts_project(
+    name = "cart_test_lib",
+    testonly = True,
+    srcs = glob(["src/**/*.test.ts"]),
+    declaration = True,
+    tsconfig = "//:tsconfig",
+    transpiler = "tsc",
+    deps = [
+        ":cart",
+        ":node_modules/vitest",
+        "//proto/acme/cart/v1:cart_ts_proto",
+    ],
+)
+
+# Runs vitest under Bazel for CI. Illustrative wiring — confirm the vitest bin
+# entry against your installed version. Locally you'd typically just run
+# `vitest` directly (see the testing-* skills); Bazel owns the CI test run so it
+# can scope to affected targets.
+js_test(
+    name = "test",
+    data = [
+        ":cart_test_lib",
+        ":node_modules/vitest",
+    ],
+    entry_point = ":node_modules/vitest/vitest.mjs",
+    args = ["run"],
+)

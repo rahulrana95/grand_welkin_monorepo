@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+// The single source of truth for the Cart domain. Every language's types are
+// GENERATED from this file — never hand-written. Editing it rebuilds and
+// retests exactly the targets that consume it (see the BUILD.bazel here).
+package acme.cart.v1;
+
+import "buf/validate/validate.proto";
+
+// A line item in a shopping cart.
+message LineItem {
+  string product_id = 1 [(buf.validate.field).string.uuid = true];
+  uint32 quantity = 2 [(buf.validate.field).uint32 = {gte: 1, lte: 999}];
+  // Price in minor units (cents) to avoid floating-point money bugs.
+  int64 unit_price_cents = 3 [(buf.validate.field).int64.gte = 0];
+}
+
+// A customer's cart.
+message Cart {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+  string customer_id = 2 [(buf.validate.field).string.uuid = true];
+  repeated LineItem items = 3;
+  CartStatus status = 4;
+}
+
+enum CartStatus {
+  CART_STATUS_UNSPECIFIED = 0;
+  CART_STATUS_OPEN = 1;
+  CART_STATUS_CHECKED_OUT = 2;
+  CART_STATUS_ABANDONED = 3;
+}
+
+message GetCartRequest {
+  string cart_id = 1 [(buf.validate.field).string.uuid = true];
+}
+
+message GetCartResponse {
+  Cart cart = 1;
+}
+
+message AddItemRequest {
+  string cart_id = 1 [(buf.validate.field).string.uuid = true];
+  LineItem item = 2 [(buf.validate.field).required = true];
+}
+
+message AddItemResponse {
+  Cart cart = 1;
+}
+
+// Typed RPC surface — Connect-ES generates a fully-typed client from this.
+service CartService {
+  rpc GetCart(GetCartRequest) returns (GetCartResponse);
+  rpc AddItem(AddItemRequest) returns (AddItemResponse);
+}

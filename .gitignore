@@ -1,0 +1,28 @@
+# Bazel
+/bazel-*
+.bazelrc.user
+
+# Node / pnpm
+node_modules/
+.pnpm-store/
+
+# Generated proto code (generate-on-build; the .proto is the source of truth).
+# If you switch to the "committed generated code" model, un-ignore these
+# and enforce freshness in CI with `buf generate && git diff --exit-code`.
+**/gen/**
+*_pb.ts
+*_pb.js
+*_pb.d.ts
+*_connect.ts
+
+# Go
+/bin/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Misc
+.DS_Store
+*.log

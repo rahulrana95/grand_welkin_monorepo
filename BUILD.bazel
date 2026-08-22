@@ -1,0 +1,26 @@
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+load("@gazelle//:def.bzl", "gazelle")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+
+# Link every npm + first-party workspace package once at the root.
+npm_link_all_packages(name = "node_modules")
+
+# Shared base tsconfig, referenced by every ts_project via tsconfig = "//:tsconfig".
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.json",
+    visibility = ["//visibility:public"],
+)
+
+# ---------------------------------------------------------------------------
+# Gazelle — auto-generate & maintain BUILD files from imports (the "minimal toil"
+# lever). Native Gazelle handles Go + proto_library; the Aspect JS extension /
+# `aspect configure` handles ts_project, js_library, and ts_proto_library.
+#
+# Run: bazel run //:gazelle   (or: aspect configure)
+# ---------------------------------------------------------------------------
+# gazelle:prefix github.com/grand-welkin/monorepo
+# gazelle:js_pnpm_lockfile //:pnpm-lock.yaml
+# gazelle:js_tsconfig //:tsconfig
+# gazelle:js_proto ts_proto_library
+gazelle(name = "gazelle")

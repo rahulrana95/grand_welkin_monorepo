@@ -1,0 +1,20 @@
+# Buf v2 codegen config.
+#
+# This drives the STANDALONE / non-Bazel generation path (`buf generate`) — handy
+# for local dev, editors, and CI freshness checks. Inside Bazel, the equivalent
+# TS is produced by `ts_proto_library` (see proto/acme/cart/v1/BUILD.bazel) so the
+# action graph can track proto -> types dependencies precisely.
+version: v2
+inputs:
+  - directory: proto
+plugins:
+  # TypeScript messages + enums (Protobuf-ES v2 emits plain objects).
+  - local: protoc-gen-es
+    out: gen/ts
+    opt:
+      - target=ts
+  # Typed RPC service clients (Connect-ES).
+  - local: protoc-gen-connect-es
+    out: gen/ts
+    opt:
+      - target=ts
