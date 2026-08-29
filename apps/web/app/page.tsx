@@ -17,13 +17,15 @@ export default function HomePage() {
       {/* Restrained arched hero — hands off to inventory quickly (docs 01). */}
       <section className="container" style={{ paddingTop: "2rem" }}>
         <div
-          className="arch"
           style={{
             position: "relative",
+            overflow: "hidden",
+            borderRadius: "clamp(16px, 14vw, 220px) clamp(16px, 14vw, 220px) 16px 16px",
             minHeight: "min(62vh, 560px)",
             display: "grid",
-            alignItems: "center",
-            padding: "clamp(2rem, 6vw, 5rem)",
+            alignItems: "end",
+            padding: "clamp(2rem, 6vw, 4rem)",
+            paddingTop: "clamp(3.5rem, 12vw, 8rem)",
             background: "radial-gradient(120% 100% at 50% 120%, var(--wb-gold) -10%, var(--wb-blue) 45%, #0F1A1E 130%)",
             color: "#fff",
           }}
