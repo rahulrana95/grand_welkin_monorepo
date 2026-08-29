@@ -78,3 +78,9 @@ pnpm --filter @acme/cart dev
 
 The repo's working conventions for code, tests, and this architecture live as agent
 skills under [`.claude/skills/`](.claude/skills/) — see `monorepo-architecture`.
+
+## Apps
+
+- **WelkinBliss** (welkinbliss.com) — the first app: an SEO-first, independently-deployable
+  luxury vacation-rental frontend. Research & decisions:
+  [`docs/welkinbliss/`](docs/welkinbliss/00-research-overview.md).
