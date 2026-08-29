@@ -1,0 +1,87 @@
+/**
+ * WelkinBliss design tokens — the single source of truth for brand colour,
+ * type, and theme. Derived from the official Brand Guidelines 2026.
+ *
+ * Blue is #2F6D7F: this matches the guide's RGB (47,109,127) and the colour
+ * sampled directly from the logo render (~#36697F) — NOT the guide's stray
+ * HEX "#247989", which does not match the mark.
+ *
+ * Import once at the app root:  import "@welkinbliss/ui/tokens.css";
+ */
+
+:root {
+  /* Brand core */
+  --wb-blue: #2F6D7F;   /* Primary A — Pantone 7715C — wordmark "WELKIN", UI primary */
+  --wb-gold: #E3BA38;   /* Primary B — Pantone 7409C — the sun, "BLISS", CTAs        */
+  --wb-ink: #14181B;    /* rich near-black — body text */
+  --wb-paper: #FBFAF7;  /* warm off-white — default ground */
+  --wb-white: #FFFFFF;
+
+  /* Blue tints (over white) */
+  --wb-blue-80: #588B99;
+  --wb-blue-60: #82A7B2;
+  --wb-blue-40: #ABC4CC;
+  --wb-blue-08: #EEF3F5;   /* subtle tinted surface */
+
+  /* Gold tints (over white) */
+  --wb-gold-80: #E8C860;
+  --wb-gold-60: #EED688;
+  --wb-gold-40: #F4E3AF;
+
+  /* Semantic (light theme) */
+  --wb-bg: var(--wb-paper);
+  --wb-surface: var(--wb-white);
+  --wb-surface-tinted: var(--wb-blue-08);
+  --wb-text: var(--wb-ink);
+  --wb-text-muted: #55606A;
+  --wb-primary: var(--wb-blue);
+  --wb-on-primary: var(--wb-white);
+  --wb-accent: var(--wb-gold);
+  --wb-on-accent: var(--wb-ink);   /* gold ALWAYS takes dark text — never small light text */
+  --wb-border: #E4E0D8;
+  --wb-focus: var(--wb-gold);
+
+  /* Type */
+  --wb-font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --wb-font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --wb-h1: clamp(2.5rem, 5vw, 4rem);
+  --wb-h2: clamp(2rem, 3.5vw, 3rem);
+  --wb-h3: clamp(1.5rem, 2.5vw, 2rem);
+  --wb-sub: 1.125rem;
+  --wb-body: 1rem;      /* 16px min */
+  --wb-small: 0.875rem;
+
+  /* Shape — the arch is the signature motif */
+  --wb-radius: 12px;
+  --wb-radius-arch: 999px 999px 12px 12px;  /* arched-top card */
+}
+
+/* Dark ("twilight") — deep teal-navy derived from the blue.
+   Applies on explicit [data-theme="dark"] and on system-dark unless [data-theme="light"]. */
+:root[data-theme="dark"] {
+  --wb-bg: #0F1A1E;
+  --wb-surface: #16242A;
+  --wb-surface-tinted: #1B2E35;
+  --wb-text: #EDEAE3;
+  --wb-text-muted: #A7B2B6;
+  --wb-primary: #4A9DB0;          /* lightened blue for contrast on dark */
+  --wb-on-primary: #06120F;
+  --wb-accent: var(--wb-gold);
+  --wb-on-accent: #14181B;
+  --wb-border: #24343A;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --wb-bg: #0F1A1E;
+    --wb-surface: #16242A;
+    --wb-surface-tinted: #1B2E35;
+    --wb-text: #EDEAE3;
+    --wb-text-muted: #A7B2B6;
+    --wb-primary: #4A9DB0;
+    --wb-on-primary: #06120F;
+    --wb-accent: var(--wb-gold);
+    --wb-on-accent: #14181B;
+    --wb-border: #24343A;
+  }
+}

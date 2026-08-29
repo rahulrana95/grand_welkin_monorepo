@@ -44,12 +44,12 @@ Win the way **Wander** wins on *feel* (curated, architecturally-striking invento
 - **Deeper destination content** (Marriott under-invests): real "how to get there / neighborhoods / when to visit / itineraries" guides = topical authority + long-tail + AI-citation fuel.
 - **Speed** (both are heavy): AVIF heroes with `fetchpriority`, RSC-first, Lighthouse-gated — small-brand advantage.
 
-## 5. Open decisions & dependencies (need your input)
+## 5. Open decisions & dependencies
 
-1. **The logo / brand assets.** The theme is "inspired from our logo," but I don't have it. `05-brand-theme-direction.md` proposes a *provisional* direction from the name (welkin = sky/heaven; bliss = serene luxury). **Share the logo (or its colors) to finalize palette/type/mark.**
-2. **Business model:** marketplace (third-party managed homes, like Marriott) vs owned/operated (like Wander)? This decides the trust strategy and whether we inherit the variance problem.
+1. ✅ **Brand.** Official Brand Guidelines 2026 in hand; the real system is implemented in **[`@welkinbliss/ui`](../../libs/ui/)** — blue **`#2F6D7F`** (confirmed by sampling the logo; the guide's `#247989` was wrong), gold `#E3BA38`, **Playfair Display + Inter** (approved), arch/sun/nature motif. Logo SVGs (3 lockups + monograms + favicon) **recreated from the PDF** in `libs/ui/brand/`. Open: official editable vector wordmark to replace the recreated one.
+2. ✅ **Business model = owned/operated** (like Wander) — trust strategy is first-party (hotel-grade consistency, quality guarantee, 24/7 concierge, verified reviews); avoids the marketplace variance/accountability gap.
 3. **i18n scope at launch** (English-only with `/en/` prefix for future locales, or multi-locale now?).
-4. **Supply & photography operations** — who sources and shoots inventory to the standard above.
+4. **Supply & photography operations** — who sources and shoots inventory to the standard above (the brand is nature-forward: natural light, outdoors, serene).
 5. **Deploy target confirmation** — own-cloud containers (recommended) vs Vercel vs Cloudflare/OpenNext.
 
 ## 6. Suggested next steps (after this research merges)

@@ -1,0 +1,33 @@
+name: web (WelkinBliss)
+
+# Independent per-app pipeline — runs only when the app or its graph deps change.
+# Separate from bazel.yml (cross-language) and buf.yml (proto). See docs 04 §5.
+on:
+  pull_request:
+    paths: ["apps/web/**", "libs/ui/**", "pnpm-lock.yaml"]
+  push:
+    branches: [main]
+    paths: ["apps/web/**", "libs/ui/**"]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      # Canonical proto types come from Bazel/Buf when the app consumes them:
+      # - run: bazel run //proto:generate_ts   (or: buf generate)
+      - run: pnpm --filter @welkinbliss/web typecheck
+      - run: pnpm --filter @welkinbliss/web build
+      # Tests (per the testing-* skills) once specs are added:
+      # - run: pnpm --filter @welkinbliss/web test          # Vitest + MSW
+      # - run: pnpm --filter @welkinbliss/web test:e2e       # Playwright vs preview
+      - name: Lighthouse CI (Core Web Vitals gate)
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: apps/web/lighthouserc.json
+          uploadArtifacts: true

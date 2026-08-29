@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 132" role="img" aria-label="WelkinBliss">
+  <title>WelkinBliss logo</title>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.5">
+    <path d="M26 116 L26 52 A34 34 0 0 1 94 52 L94 116" stroke="#2F6D7F"/>
+    <path d="M24 116 L96 116" stroke="#2F6D7F"/>
+    <path d="M31 74 A30 30 0 0 1 55 45" stroke="#2F6D7F" stroke-width="3"/>
+    <g stroke="#E3BA38" stroke-width="3.4">
+      <line x1="55" y1="40" x2="55" y2="28"/>
+      <line x1="41" y1="44" x2="35" y2="33"/>
+      <line x1="69" y1="44" x2="75" y2="33"/>
+      <line x1="32" y1="55" x2="21" y2="49"/>
+      <line x1="78" y1="55" x2="89" y2="49"/>
+      <line x1="27" y1="68" x2="15" y2="67"/>
+      <line x1="83" y1="68" x2="95" y2="67"/>
+    </g>
+    <circle cx="55" cy="66" r="17" stroke="#E3BA38"/>
+    <path d="M24 116 C28 100 38 88 49 90 C58 92 61 101 68 101 C75 101 80 94 86 100 C90 104 93 110 96 116" stroke="#2F6D7F"/>
+    <path d="M40 110 C48 103 58 104 64 111" stroke="#2F6D7F" stroke-width="3"/>
+  </g>
+  <g font-family="'Playfair Display', Georgia, 'Times New Roman', serif" font-weight="700" letter-spacing="3">
+    <text x="150" y="64" font-size="46" fill="#2F6D7F">WELKIN</text>
+    <text x="150" y="114" font-size="46" fill="#E3BA38">BLISS</text>
+  </g>
+</svg>
