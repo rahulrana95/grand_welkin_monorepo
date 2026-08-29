@@ -1,0 +1,111 @@
+/* Base styles built on the @welkinbliss/ui tokens (imported before this file). */
+
+/* Wire the next/font faces into the brand font tokens. */
+:root {
+  --wb-font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --wb-font-body: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --wb-container: 1200px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--wb-bg);
+  color: var(--wb-text);
+  font-family: var(--wb-font-body);
+  font-size: var(--wb-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--wb-font-display);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0 0 0.5em;
+}
+h1 { font-size: var(--wb-h1); }
+h2 { font-size: var(--wb-h2); }
+h3 { font-size: var(--wb-h3); }
+
+a { color: var(--wb-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+img { max-width: 100%; display: block; }
+
+:focus-visible {
+  outline: 3px solid var(--wb-focus);
+  outline-offset: 2px;
+}
+
+/* Layout primitives */
+.container {
+  width: 100%;
+  max-width: var(--wb-container);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+}
+
+.section { padding-block: clamp(3rem, 8vw, 6rem); }
+.eyebrow {
+  font-family: var(--wb-font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--wb-primary);
+}
+.muted { color: var(--wb-text-muted); }
+
+/* The arch — WelkinBliss signature motif */
+.arch {
+  border-radius: var(--wb-radius-arch);
+  overflow: hidden;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-family: var(--wb-font-body);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.btn:hover { transform: translateY(-1px); text-decoration: none; }
+.btn--primary { background: var(--wb-accent); color: var(--wb-on-accent); } /* gold + dark text */
+.btn--ghost { background: transparent; color: var(--wb-primary); border-color: var(--wb-border); }
+
+/* Cards & grids */
+.grid {
+  display: grid;
+  gap: clamp(1rem, 3vw, 2rem);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+.card {
+  background: var(--wb-surface);
+  border: 1px solid var(--wb-border);
+  border-radius: var(--wb-radius);
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn:hover { transform: none; }
+}

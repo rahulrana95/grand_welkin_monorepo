@@ -26,3 +26,9 @@ __pycache__/
 # Misc
 .DS_Store
 *.log
+
+# Next.js
+.next/
+apps/**/.next/
+*.tsbuildinfo
+.vercel
