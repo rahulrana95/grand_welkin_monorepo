@@ -1,6 +1,8 @@
 # Brand & Theme System
 
-> Derived from the official **WelkinBliss Brand Guidelines 2026** (`Brandguide.pdf`, 2026). This replaces the earlier provisional direction — these are the real, logo-derived values. One thing to confirm with the designer: the guide lists the blue as HEX `#247989` **and** RGB `47,109,127` (`#2F6D7F`) — a small internal mismatch; this doc standardizes on the HEX `#247989`. Verify which is canonical before locking tokens.
+> Derived from the official **WelkinBliss Brand Guidelines 2026** (`Brandguide.pdf`). These are the real, logo-derived values. **Live tokens + logo SVGs now exist in [`libs/ui`](../../libs/ui/) (`@welkinbliss/ui`)** — this doc is the rationale; the code is the source of truth.
+>
+> **Blue resolved:** the guide had an internal mismatch (HEX `#247989` vs RGB `47,109,127`). Sampling the actual logo from the PDF renders **~#36697F**, which matches the RGB spec, **not** `#247989`. Canonical blue = **`#2F6D7F`**.
 
 ## The brand in one line
 
@@ -21,7 +23,7 @@ Core brand colors (exact from the guide):
 
 | Token | HEX | Pantone | Use |
 |---|---|---|---|
-| `--wb-blue` | `#247989` | 7715C | Primary — wordmark, UI primary, headings, links, fills |
+| `--wb-blue` | `#2F6D7F` | 7715C | Primary — wordmark, UI primary, headings, links, fills |
 | `--wb-gold` | `#E3BA38` | 7409C | Accent — CTAs, highlights, the "sun" |
 | `--wb-ink` | `#14181B` | (rich black) | Body text |
 | `--wb-paper` | `#FBFAF7` | (warm white) | Default ground |
@@ -29,57 +31,19 @@ Core brand colors (exact from the guide):
 
 Tint ramps (the guide specifies 95/80/60/40% steps; values below are computed tints over white — tune as needed):
 
+The full token set (core + tints + light/dark semantics + type + shape) is implemented in
+**[`libs/ui/src/tokens.css`](../../libs/ui/src/tokens.css)** — the canonical source. Core:
+
 ```css
-:root {
-  /* Brand core */
-  --wb-blue: #247989;
-  --wb-gold: #E3BA38;
-  --wb-ink: #14181B;
-  --wb-paper: #FBFAF7;
-  --wb-white: #FFFFFF;
-
-  /* Blue tints */
-  --wb-blue-80: #4A8D9B;
-  --wb-blue-60: #7CAFB8;
-  --wb-blue-40: #A7C9D0;
-  --wb-blue-08: #EAF2F4;   /* subtle tinted surface */
-
-  /* Gold tints */
-  --wb-gold-80: #E9C862;
-  --wb-gold-60: #EFD88C;
-  --wb-gold-40: #F5E6B6;
-
-  /* Semantic (light) */
-  --wb-bg: var(--wb-paper);
-  --wb-surface: var(--wb-white);
-  --wb-text: var(--wb-ink);
-  --wb-text-muted: #55606A;
-  --wb-primary: var(--wb-blue);
-  --wb-on-primary: var(--wb-white);
-  --wb-accent: var(--wb-gold);
-  --wb-on-accent: var(--wb-ink);   /* gold needs DARK text on it */
-  --wb-border: #E4E0D8;
-}
-
-/* Dark theme — "twilight": deep teal-navy derived from the blue */
-:root[data-theme="dark"], :root:not([data-theme="light"]) {
-  @media (prefers-color-scheme: dark) {
-    --wb-bg: #0F1A1E;
-    --wb-surface: #16242A;
-    --wb-text: #EDEAE3;
-    --wb-text-muted: #A7B2B6;
-    --wb-primary: #4A9DB0;         /* lighten blue for contrast on dark */
-    --wb-on-primary: #06120F;
-    --wb-accent: var(--wb-gold);   /* gold holds up on dark */
-    --wb-on-accent: #14181B;
-    --wb-border: #24343A;
-  }
-}
+--wb-blue: #2F6D7F;   /* Pantone 7715C */
+--wb-gold: #E3BA38;   /* Pantone 7409C */
+--wb-ink:  #14181B;   --wb-paper: #FBFAF7;   --wb-white: #FFFFFF;
+--wb-accent: var(--wb-gold);  --wb-on-accent: var(--wb-ink);  /* gold takes dark text */
 ```
 
 **Accessibility rules (important):**
 - **Gold `#E3BA38` fails contrast as text on white** — use it for CTA/accent *fills with ink text*, large graphic elements, and the sun motif; **never** for body/small text on a light ground.
-- **Blue `#247989` on paper** is ~4.6:1 — OK for large text/UI and borderline for body; prefer `--wb-ink` for long-form body text, blue for headings/links/UI. Verify every text/bg pair at AA (4.5:1) before shipping.
+- **Blue `#2F6D7F` on paper** is ~5:1 — OK for headings/links/UI; prefer `--wb-ink` for long-form body text. Verify every text/bg pair at AA (4.5:1) before shipping.
 
 ## Typography
 
@@ -112,14 +76,23 @@ body { font-family: var(--wb-font-body); color: var(--wb-text); background: var(
 - **Motion:** subtle, slow, confident — gentle fades / soft parallax; a sunrise/gradient can nod to the mark. Respect `prefers-reduced-motion`.
 - **Voice:** calm, warm, optimistic, specific — "everyday bliss," "your calm above it all." Trust made concrete and numeric (vetting standard, verified reviews, 24/7 concierge).
 
-## Implementation
+## Implementation — status
 
-- Ship the tokens above as **`@welkinbliss/ui`** (the shared design-system package from `04-frontend-framework-and-deploy.md`) so `apps/web` and any future app consume one source of truth. Define the full light palette on `:root`; override only what changes for dark (per our `react-typescript` theming conventions).
-- Fonts self-hosted via `next/font` (Playfair Display + Inter) with `size-adjust` fallbacks.
-- Favicon / app icon = the **arch monogram**; maskable variants on `--wb-blue` and `--wb-paper`.
+- **Tokens shipped** as [`@welkinbliss/ui`](../../libs/ui/) (`src/tokens.css`) — one source of truth for `apps/web` and future apps; full light palette on `:root`, dark overrides only.
+- **Logo SVGs created** in [`libs/ui/brand/`](../../libs/ui/brand/): 3 lockups (colour / mono / black), 3 monograms, and a favicon — **recreated from the brand-guide PDF** (symbol/favicon are pure vector paths; the lockup wordmark uses the Playfair webfont — swap in the official vector when available).
+- Fonts self-hosted via `next/font` (Playfair Display + **Inter**, approved) with `size-adjust` fallbacks. Favicon / app icon = the **arch monogram**.
 
-## Still worth confirming with you
-1. **Blue HEX vs RGB mismatch** in the guide (`#247989` vs `#2F6D7F`) — which is canonical?
-2. **Body sans choice** (Inter recommended) — approve or specify.
-3. **Vector logo assets** (SVG) for the three lockups + arch monogram — to add to `@welkinbliss/ui` and generate the favicon set. (I have the PDF, not editable vectors.)
-4. **Positioning/business model** (nature-forward stays; marketplace vs owned) — confirms voice + trust design.
+## Resolved / still open
+- ✅ **Blue** = `#2F6D7F` (confirmed by sampling the logo; the guide's `#247989` was wrong).
+- ✅ **Body sans** = **Inter** (approved).
+- ✅ **Logo assets** = recreated as SVG in `@welkinbliss/ui` (official editable vectors welcome later to replace the recreated wordmark).
+- ✅ **Business model** = **owned/operated** (like Wander) — see voice/trust note below.
+- ⏳ Official **vector logo files** from the designer, to supersede the recreated wordmark.
+
+### Owned/operated → voice & trust
+Because WelkinBliss **owns and operates** its stays (not a third-party marketplace), lean
+into the vertical-integration trust story: hotel-grade consistency, first-party quality
+guarantee, 24/7 concierge, and concrete numbers (satisfaction, verified reviews). This is
+Wander's playbook and a genuine edge over Marriott's third-party-management accountability
+gap (`01-reference-teardowns.md`). Voice: calm, warm, optimistic, first-person stewardship
+("homes we care for," "your calm above it all").
