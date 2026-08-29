@@ -44,12 +44,12 @@ Win the way **Wander** wins on *feel* (curated, architecturally-striking invento
 - **Deeper destination content** (Marriott under-invests): real "how to get there / neighborhoods / when to visit / itineraries" guides = topical authority + long-tail + AI-citation fuel.
 - **Speed** (both are heavy): AVIF heroes with `fetchpriority`, RSC-first, Lighthouse-gated — small-brand advantage.
 
-## 5. Open decisions & dependencies (need your input)
+## 5. Open decisions & dependencies
 
-1. **The logo / brand assets.** The theme is "inspired from our logo," but I don't have it. `05-brand-theme-direction.md` proposes a *provisional* direction from the name (welkin = sky/heaven; bliss = serene luxury). **Share the logo (or its colors) to finalize palette/type/mark.**
-2. **Business model:** marketplace (third-party managed homes, like Marriott) vs owned/operated (like Wander)? This decides the trust strategy and whether we inherit the variance problem.
+1. ~~**The logo / brand assets.**~~ **Received** — the official Brand Guidelines 2026 are in hand; `05-brand-theme-direction.md` now carries the real system (blue `#247989`, gold `#E3BA38`, Playfair Display, arch/sun/nature motif, calm nature-forward positioning). Remaining brand to-dos: confirm the guide's blue HEX-vs-RGB mismatch, approve the body sans (Inter recommended), and get **vector (SVG) logo assets** for `@welkinbliss/ui` + favicon.
+2. **Business model:** marketplace (third-party managed, like Marriott) vs owned/operated (like Wander)? Decides the trust strategy and whether we inherit the variance problem.
 3. **i18n scope at launch** (English-only with `/en/` prefix for future locales, or multi-locale now?).
-4. **Supply & photography operations** — who sources and shoots inventory to the standard above.
+4. **Supply & photography operations** — who sources and shoots inventory to the standard above (the brand is nature-forward: natural light, outdoors, serene).
 5. **Deploy target confirmation** — own-cloud containers (recommended) vs Vercel vs Cloudflare/OpenNext.
 
 ## 6. Suggested next steps (after this research merges)
