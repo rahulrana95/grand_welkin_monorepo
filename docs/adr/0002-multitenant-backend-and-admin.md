@@ -83,6 +83,8 @@ timestamps) ·
    Auth (admin/staff only), and admin blocked-dates / per-date prices merged into the
    public availability calendar. All behind `hasSupabase()` with the mocks as the
    fallback, so the monorepo builds and its visual tests pass without credentials.
-4. **Then:** photo upload UI + the async `sharp` image variant pipeline, editable
-   site-copy consumed by the public site, and the real Uplisting client + webhook
-   `revalidateTag`.
+4. **Editable site copy (done):** the public site reads `welkin_bliss_site_copy`
+   (Supabase over defaults, cached + tagged) for the home hero and footer; the admin
+   triggers on-demand revalidation (`/api/revalidate`) after an edit.
+5. **Then:** photo upload UI + the async `sharp` image variant pipeline, and the real
+   Uplisting client + webhook `revalidateTag`.

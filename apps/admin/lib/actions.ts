@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { AUTH_COOKIE, getSession, isAllowed } from "./auth";
 import { getRepo } from "./repo";
 import type { PropertyInput, PropertyStatus } from "./repo";
+import { revalidateWebSiteCopy } from "./revalidate-web";
 import { createSupabaseServerClient } from "./supabase-server";
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
@@ -102,4 +103,5 @@ export async function toggleBlocked(propertyId: string, date: string) {
 export async function updateSiteCopy(formData: FormData) {
   await getRepo().updateSiteCopy(String(formData.get("key")), String(formData.get("value")));
   revalidatePath("/site-copy");
+  await revalidateWebSiteCopy(); // best-effort: refresh the public site's cached copy
 }
