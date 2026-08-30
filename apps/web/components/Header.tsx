@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Logo } from "./Logo";
 
 const NAV: readonly { readonly href: string; readonly label: string }[] = [
-  { href: "/destinations/amalfi-coast", label: "Destinations" },
-  { href: "/#collections", label: "Collections" },
+  { href: "/explore", label: "Destinations" },
+  { href: "/collections", label: "Collections" },
   { href: "/#journal", label: "Journal" },
   { href: "/#about", label: "Our homes" },
 ];

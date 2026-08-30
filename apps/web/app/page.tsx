@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { CollectionCard } from "@/components/CollectionCard";
 import { PropertyCard } from "@/components/PropertyCard";
 import { SearchBar } from "@/components/SearchBar";
+import { COLLECTIONS } from "@/lib/collections";
 import { DESTINATIONS, PROPERTIES } from "@/lib/data";
 import { SITE } from "@/lib/site";
 
@@ -59,8 +61,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Destinations (the geo × theme matrix seed) */}
+      {/* Collections (theme axis of the geo × theme matrix) */}
       <section id="collections" className="container section" style={{ paddingTop: 0 }}>
+        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: "1.25rem" }}>
+          <div>
+            <p className="eyebrow">Collections</p>
+            <h2>Ways to stay</h2>
+          </div>
+          <Link href="/collections" className="btn btn--ghost">All collections</Link>
+        </header>
+        <div className="grid">
+          {COLLECTIONS.map((c) => (
+            <CollectionCard key={c.slug} collection={c} />
+          ))}
+        </div>
+      </section>
+
+      {/* Destinations (geo axis) */}
+      <section id="destinations" className="container section" style={{ paddingTop: 0 }}>
         <p className="eyebrow">Destinations</p>
         <h2>Where to wander</h2>
         <div className="grid" style={{ marginTop: "1.25rem" }}>

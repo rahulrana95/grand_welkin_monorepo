@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BookingWidget } from "@/components/BookingWidget";
+import { Chips } from "@/components/Chips";
 import { JsonLd } from "@/components/JsonLd";
 import { Photo } from "@/components/Photo";
+import { COLLECTIONS } from "@/lib/collections";
 import { getDestination, getProperty, PROPERTIES } from "@/lib/data";
 import { breadcrumbJsonLd, nightlyLine, propertyJsonLd } from "@/lib/seo";
 import { priceFormatted } from "@/lib/types";
@@ -39,6 +41,8 @@ export default async function PropertyPage({ params }: PageProps) {
   if (!property) notFound();
   const destination = getDestination(property.destinationSlug);
   if (!destination) notFound();
+
+  const matchingCollections = COLLECTIONS.filter((c) => c.match(property, destination));
 
   return (
     <>
@@ -124,6 +128,20 @@ export default async function PropertyPage({ params }: PageProps) {
           </p>
         </aside>
       </div>
+
+      <section className="container section" style={{ paddingTop: 0 }}>
+        <p className="eyebrow" style={{ marginBottom: "0.5rem" }}>Explore more</p>
+        <Chips
+          label="Related collections and destination"
+          items={[
+            ...matchingCollections.map((c) => ({
+              label: `${c.title} in ${destination.name}`,
+              href: `/collections/${c.slug}/${destination.slug}`,
+            })),
+            { label: `All homes in ${destination.name}`, href: `/destinations/${destination.slug}` },
+          ]}
+        />
+      </section>
     </>
   );
 }
