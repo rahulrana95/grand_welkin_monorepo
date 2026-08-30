@@ -29,6 +29,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@welkinbliss/availability':
+        specifier: workspace:*
+        version: link:../../libs/availability
       '@welkinbliss/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -57,6 +60,8 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
+
+  libs/availability: {}
 
   libs/cart:
     dependencies:

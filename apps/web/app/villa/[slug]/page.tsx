@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BookingWidget } from "@/components/BookingWidget";
+import { BookingPanel } from "@/components/BookingPanel";
 import { Chips } from "@/components/Chips";
 import { JsonLd } from "@/components/JsonLd";
 import { Photo } from "@/components/Photo";
@@ -117,9 +117,9 @@ export default async function PropertyPage({ params }: PageProps) {
         </article>
 
         <aside>
-          <BookingWidget
+          <BookingPanel
+            propertySlug={property.slug}
             propertyName={property.name}
-            nightlyPriceCents={property.nightlyPriceCents}
             currency={property.currency}
             maxGuests={property.sleeps}
           />

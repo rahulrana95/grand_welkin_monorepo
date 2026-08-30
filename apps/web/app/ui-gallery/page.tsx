@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BookingWidget } from "@/components/BookingWidget";
+import { BookingPanel } from "@/components/BookingPanel";
 import { Chips } from "@/components/Chips";
 import { CollectionCard } from "@/components/CollectionCard";
 import { Logo } from "@/components/Logo";
@@ -58,10 +58,10 @@ export default function UiGalleryPage() {
       <Case id="property-card"><PropertyCard property={property} /></Case>
       <Case id="collection-card"><CollectionCard collection={collection} /></Case>
 
-      <Case id="booking-widget">
-        <BookingWidget
+      <Case id="booking-panel">
+        <BookingPanel
+          propertySlug={property.slug}
           propertyName={property.name}
-          nightlyPriceCents={property.nightlyPriceCents}
           currency={property.currency}
           maxGuests={property.sleeps}
         />
