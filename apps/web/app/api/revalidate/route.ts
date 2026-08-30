@@ -1,5 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
+import { CATALOGUE_TAG } from "@/lib/catalogue";
 import { SITE_COPY_TAG } from "@/lib/site-copy";
 
 /**
@@ -10,7 +11,7 @@ import { SITE_COPY_TAG } from "@/lib/site-copy";
  *   POST /api/revalidate            header: x-revalidate-secret: <secret>
  *   body (optional): { "tag": "site-copy" }   // defaults to the site-copy tag
  */
-const ALLOWED_TAGS = new Set<string>([SITE_COPY_TAG]);
+const ALLOWED_TAGS = new Set<string>([SITE_COPY_TAG, CATALOGUE_TAG]);
 
 export async function POST(request: Request): Promise<NextResponse> {
   const secret = process.env.REVALIDATE_SECRET;

@@ -1,18 +1,56 @@
+import type { ImageFormat, PropertyImage } from "@/lib/types";
+
 /**
- * Branded placeholder standing in for the AVIF photo set (no CDN assets yet).
- * Replace with `next/image` (AVIF/WebP, `priority` on the LCP hero, explicit
- * dimensions) once real imagery is wired — see docs 02 §2.
+ * Property imagery. With a real `image`, renders a `<picture>` that serves the
+ * pre-generated responsive AVIF/WebP variants (ADR 0002 §5) with the original as
+ * fallback — no runtime optimization. Without one, falls back to the brand-gradient
+ * placeholder (used by the mock catalogue and homes with no photos yet).
  */
 interface PhotoProps {
   readonly gradient: readonly [string, string];
   readonly alt: string;
   readonly ratio?: string; // e.g. "16 / 10"
   readonly arch?: boolean;
-  readonly priority?: boolean; // documents LCP intent
+  readonly priority?: boolean; // LCP intent → eager load
+  readonly image?: PropertyImage | undefined;
+  /** Responsive `sizes` hint for the browser (default: full viewport width). */
+  readonly sizes?: string;
   readonly children?: React.ReactNode;
 }
 
-export function Photo({ gradient, alt, ratio = "16 / 10", arch = false, children }: PhotoProps) {
+const srcSetFor = (image: PropertyImage, format: ImageFormat): string =>
+  image.variants
+    .filter((v) => v.format === format)
+    .map((v) => `${v.url} ${v.width}w`)
+    .join(", ");
+
+export function Photo({ gradient, alt, ratio = "16 / 10", arch = false, priority = false, image, sizes = "100vw", children }: PhotoProps) {
+  if (image) {
+    const avif = srcSetFor(image, "avif");
+    const webp = srcSetFor(image, "webp");
+    return (
+      <div
+        className={arch ? "arch" : undefined}
+        style={{ position: "relative", aspectRatio: ratio, overflow: "hidden", background: "var(--wb-surface-tinted)" }}
+      >
+        <picture>
+          {avif ? <source type="image/avif" srcSet={avif} sizes={sizes} /> : null}
+          {webp ? <source type="image/webp" srcSet={webp} sizes={sizes} /> : null}
+          {/* eslint-disable-next-line @next/next/no-img-element -- variants are pre-generated; no runtime optimization */}
+          <img
+            src={image.src}
+            alt={alt}
+            loading={priority ? "eager" : "lazy"}
+            decoding="async"
+            {...(priority ? { fetchPriority: "high" as const } : {})}
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </picture>
+        {children}
+      </div>
+    );
+  }
+
   const [from, to] = gradient;
   return (
     <div

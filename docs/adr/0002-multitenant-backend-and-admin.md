@@ -90,4 +90,11 @@ timestamps) ·
    delete — storing originals in Supabase Storage and generating responsive AVIF/WebP
    variants (`@welkinbliss/images`, `sharp`) recorded on `…_photos.variants`.
    (Public property pages consume these once the public catalogue reads from Supabase.)
-6. **Then:** the real Uplisting client + webhook `revalidateTag`.
+6. **Public catalogue (done):** public property surfaces (home, destination, villa
+   detail, explore, collections, sitemap, availability) read PUBLISHED properties +
+   photos from Supabase via `lib/catalogue` (cached, tag `catalogue`), falling back to
+   the mock catalogue; real photos render as responsive AVIF/WebP `<picture>` from the
+   variant set. Admin property/photo edits revalidate the `catalogue` tag. Editorial
+   fields not yet in the schema (amenities, reviews, theme) are enriched from the
+   curated set by slug, else defaulted — folding them into the DB is a later step.
+7. **Then:** the real Uplisting client + webhook `revalidateTag`.

@@ -141,8 +141,5 @@ export const PROPERTIES: readonly Property[] = [
 export const getDestination = (slug: string): Destination | undefined =>
   DESTINATIONS.find((d) => d.slug === slug);
 
-export const getProperty = (slug: string): Property | undefined =>
-  PROPERTIES.find((p) => p.slug === slug);
-
-export const propertiesInDestination = (destinationSlug: string): readonly Property[] =>
-  PROPERTIES.filter((p) => p.destinationSlug === destinationSlug);
+// Property access moved to lib/catalogue (Supabase-or-mock). `PROPERTIES` remains the
+// mock fallback + editorial source consumed there.

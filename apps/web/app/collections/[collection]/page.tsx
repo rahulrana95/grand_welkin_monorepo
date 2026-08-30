@@ -8,7 +8,6 @@ import {
   destinationsInCollection,
   getCollection,
   propertiesInCollection,
-  propertiesInCollectionAndDestination,
 } from "@/lib/collections";
 import { breadcrumbJsonLd, itemListJsonLd } from "@/lib/seo";
 
@@ -39,8 +38,14 @@ export default async function CollectionPage({ params }: PageProps) {
   const collection = getCollection(slug);
   if (!collection) notFound();
 
-  const properties = propertiesInCollection(slug);
-  const destinations = destinationsInCollection(slug);
+  const [properties, destinations] = await Promise.all([
+    propertiesInCollection(slug),
+    destinationsInCollection(slug),
+  ]);
+  const propertiesByDestination = new Map<string, typeof properties>();
+  for (const p of properties) {
+    propertiesByDestination.set(p.destinationSlug, [...(propertiesByDestination.get(p.destinationSlug) ?? []), p]);
+  }
 
   return (
     <>
@@ -97,7 +102,7 @@ export default async function CollectionPage({ params }: PageProps) {
           <div key={d.slug} style={{ marginBottom: "2.5rem" }}>
             <h2 style={{ fontSize: "1.5rem" }}>{collection.title} in {d.name}</h2>
             <div className="grid" style={{ marginTop: "1rem" }}>
-              {propertiesInCollectionAndDestination(slug, d.slug).map((p) => (
+              {(propertiesByDestination.get(d.slug) ?? []).map((p) => (
                 <PropertyCard key={p.slug} property={p} />
               ))}
             </div>

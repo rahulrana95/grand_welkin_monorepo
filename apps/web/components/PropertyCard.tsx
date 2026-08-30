@@ -7,7 +7,13 @@ export function PropertyCard({ property }: { readonly property: Property }) {
   return (
     <article className="card">
       <Link href={`/villa/${property.slug}`} aria-label={property.name}>
-        <Photo gradient={property.gradient} alt={`${property.name} — exterior`} ratio="4 / 3" />
+        <Photo
+          gradient={property.gradient}
+          image={property.images?.[0]}
+          sizes="(max-width: 700px) 100vw, 33vw"
+          alt={`${property.name} — exterior`}
+          ratio="4 / 3"
+        />
       </Link>
       <div style={{ padding: "1.1rem 1.2rem 1.3rem" }}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: "0.5rem", alignItems: "baseline" }}>

@@ -1,13 +1,13 @@
 import "server-only";
 
 /**
- * Ask the public web app to drop its cached site copy after an admin edit, so the
- * change shows immediately. Best-effort and env-gated: a no-op unless both
+ * Ask the public web app to drop a cached tag after an admin edit, so the change
+ * shows immediately. Best-effort and env-gated: a no-op unless both
  * WEB_REVALIDATE_URL (the web app's /api/revalidate) and WEB_REVALIDATE_SECRET are
- * set. Failures are swallowed — the copy is already saved; the cache TTL is the
+ * set. Failures are swallowed — the data is already saved; the cache TTL is the
  * fallback.
  */
-export async function revalidateWebSiteCopy(): Promise<void> {
+export async function revalidateWeb(tag: "site-copy" | "catalogue"): Promise<void> {
   const url = process.env.WEB_REVALIDATE_URL;
   const secret = process.env.WEB_REVALIDATE_SECRET;
   if (!url || !secret) return;
@@ -15,7 +15,7 @@ export async function revalidateWebSiteCopy(): Promise<void> {
     await fetch(url, {
       method: "POST",
       headers: { "content-type": "application/json", "x-revalidate-secret": secret },
-      body: JSON.stringify({ tag: "site-copy" }),
+      body: JSON.stringify({ tag }),
       cache: "no-store",
     });
   } catch {

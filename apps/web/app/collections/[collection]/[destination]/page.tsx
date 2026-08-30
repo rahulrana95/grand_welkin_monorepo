@@ -15,8 +15,8 @@ import { breadcrumbJsonLd, itemListJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
 
-export function generateStaticParams(): { collection: string; destination: string }[] {
-  return validIntersections().map((x) => ({ collection: x.collection, destination: x.destination }));
+export async function generateStaticParams(): Promise<{ collection: string; destination: string }[]> {
+  return (await validIntersections()).map((x) => ({ collection: x.collection, destination: x.destination }));
 }
 
 interface PageProps {
@@ -44,12 +44,16 @@ export default async function IntersectionPage({ params }: PageProps) {
   const destination = getDestination(dSlug);
   if (!collection || !destination) notFound();
 
-  const properties = propertiesInCollectionAndDestination(cSlug, dSlug);
+  const properties = await propertiesInCollectionAndDestination(cSlug, dSlug);
   if (properties.length === 0) notFound(); // no soft-404s (docs 02 §5)
 
   // Internal linking: sibling collections here + the same collection elsewhere.
-  const siblingCollections = collectionsForDestination(dSlug).filter((c) => c.slug !== cSlug);
-  const otherDestinations = destinationsInCollection(cSlug).filter((d) => d.slug !== dSlug);
+  const [siblingAll, otherAll] = await Promise.all([
+    collectionsForDestination(dSlug),
+    destinationsInCollection(cSlug),
+  ]);
+  const siblingCollections = siblingAll.filter((c) => c.slug !== cSlug);
+  const otherDestinations = otherAll.filter((d) => d.slug !== dSlug);
 
   return (
     <>

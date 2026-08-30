@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
+import { getProperties } from "@/lib/catalogue";
 import { COLLECTIONS, destinationsInCollection } from "@/lib/collections";
-import { DESTINATIONS, PROPERTIES } from "@/lib/data";
+import { DESTINATIONS } from "@/lib/data";
 import { breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -17,7 +18,13 @@ export const metadata: Metadata = {
  * collection, and (geo × theme) landing page so deep pages get indexed and
  * receive internal link equity (docs 01 — Marriott's sitemap hubs).
  */
-export default function ExplorePage() {
+export default async function ExplorePage() {
+  const properties = await getProperties();
+  const destinationsByCollection = new Map(
+    await Promise.all(
+      COLLECTIONS.map(async (c) => [c.slug, await destinationsInCollection(c.slug)] as const),
+    ),
+  );
   return (
     <>
       <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Explore" }])} />
@@ -52,7 +59,7 @@ export default function ExplorePage() {
                   <Link href={`/collections/${c.slug}`}>{c.title}</Link>
                 </h3>
                 <ul style={listStyle}>
-                  {destinationsInCollection(c.slug).map((d) => (
+                  {(destinationsByCollection.get(c.slug) ?? []).map((d) => (
                     <li key={d.slug}>
                       <Link href={`/collections/${c.slug}/${d.slug}`} className="muted">
                         {c.title} in {d.name}
@@ -66,7 +73,7 @@ export default function ExplorePage() {
         </div>
 
         <Group title="All homes">
-          {PROPERTIES.map((p) => (
+          {properties.map((p) => (
             <li key={p.slug}><Link href={`/villa/${p.slug}`}>{p.name}</Link></li>
           ))}
         </Group>
