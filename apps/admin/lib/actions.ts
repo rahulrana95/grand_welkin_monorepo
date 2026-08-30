@@ -1,30 +1,53 @@
 "use server";
 
+import { hasSupabase } from "@welkinbliss/db";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { AUTH_COOKIE, isAllowed } from "./auth";
+import { AUTH_COOKIE, getSession, isAllowed } from "./auth";
 import { getRepo } from "./repo";
 import type { PropertyInput, PropertyStatus } from "./repo";
+import { createSupabaseServerClient } from "./supabase-server";
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 export async function login(formData: FormData) {
   const email = String(formData.get("email") ?? "");
+  const password = String(formData.get("password") ?? "");
   const next = String(formData.get("next") ?? "/") || "/";
-  if (!isAllowed(email) || !formData.get("password")) {
-    redirect(`/login?error=1${next !== "/" ? `&next=${encodeURIComponent(next)}` : ""}`);
+  const dest = next.startsWith("/") ? next : "/";
+  const fail = () => redirect(`/login?error=1${dest !== "/" ? `&next=${encodeURIComponent(dest)}` : ""}`);
+
+  if (hasSupabase()) {
+    if (!email || !password) fail();
+    const supabase = await createSupabaseServerClient();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) fail();
+    // Signed in — but only privileged users may stay. Reject viewers immediately.
+    if (!(await getSession())) {
+      await supabase.auth.signOut();
+      fail();
+    }
+    redirect(dest);
   }
+
+  // Mock: allowlisted email + any non-empty password.
+  if (!isAllowed(email) || !password) fail();
   (await cookies()).set(AUTH_COOKIE, email.trim().toLowerCase(), {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 8,
   });
-  redirect(next.startsWith("/") ? next : "/");
+  redirect(dest);
 }
 
 export async function logout() {
-  (await cookies()).delete(AUTH_COOKIE);
+  if (hasSupabase()) {
+    const supabase = await createSupabaseServerClient();
+    await supabase.auth.signOut();
+  } else {
+    (await cookies()).delete(AUTH_COOKIE);
+  }
   redirect("/login");
 }
 

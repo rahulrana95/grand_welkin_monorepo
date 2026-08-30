@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
   poweredByHeader: false,
-  transpilePackages: ["@welkinbliss/ui"],
+  transpilePackages: ["@welkinbliss/ui", "@welkinbliss/db"],
 };
 
 export default nextConfig;

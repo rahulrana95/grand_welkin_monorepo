@@ -5,6 +5,7 @@ import {
   mergeOverrides,
 } from "@welkinbliss/availability";
 import { getProperty } from "@/lib/data";
+import { getAdminOverrides } from "@/lib/overrides";
 
 const addDays = (iso: string, days: number): string => {
   const d = new Date(`${iso}T00:00:00Z`);
@@ -15,8 +16,8 @@ const addDays = (iso: string, days: number): string => {
 /**
  * Per-property availability for a date range. Sourced from the availability
  * provider (Uplisting when configured, else a deterministic mock), then merged
- * with admin overrides (blocked dates / per-date prices) — currently empty until
- * the Supabase data layer is wired (ADR 0002).
+ * with admin overrides (blocked dates / per-date prices) read from Supabase when
+ * configured (ADR 0002).
  */
 export async function GET(
   request: Request,
@@ -39,8 +40,10 @@ export async function GET(
 
   const days = await provider.getAvailability(property.slug, from, to);
 
-  // Admin overrides come from welkin_bliss_blocked_dates / _property_pricing (later).
-  const merged = mergeOverrides(days, {});
+  // Admin overrides from welkin_bliss_blocked_dates / _property_pricing (empty
+  // without Supabase). Final availability = provider − blocked, admin prices applied.
+  const overrides = await getAdminOverrides(property.slug, from, to);
+  const merged = mergeOverrides(days, overrides);
 
   return NextResponse.json({ propertySlug: slug, from, to, days: merged });
 }

@@ -6,6 +6,11 @@
 node_modules/
 .pnpm-store/
 
+# Env / secrets (never commit; see each app's .env.example)
+.env
+.env.local
+.env.*.local
+
 # Generated proto code (generate-on-build; the .proto is the source of truth).
 # If you switch to the "committed generated code" model, un-ignore these
 # and enforce freshness in CI with `buf generate && git diff --exit-code`.

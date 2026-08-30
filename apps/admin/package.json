@@ -12,6 +12,8 @@
     "test:visual:update": "playwright test --update-snapshots"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.5.2",
+    "@welkinbliss/db": "workspace:*",
     "@welkinbliss/ui": "workspace:*",
     "next": "^15.5.0",
     "react": "^19.1.0",
