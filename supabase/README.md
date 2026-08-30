@@ -5,14 +5,37 @@ prefixed `welkin_bliss_*` — a future brand gets its own prefix). See
 [ADR 0002](../docs/adr/0002-multitenant-backend-and-admin.md).
 
 ## Migrations
-`migrations/0001_welkin_bliss_init.sql` — schema: users (with admin `type`),
-properties, photos (with `variants` for the async image pipeline), per-date
-pricing, blocked dates, editable site copy — plus RLS policies.
+- `migrations/0001_welkin_bliss_init.sql` — schema: users (with admin `type`),
+  properties, photos (with `variants` for the async image pipeline), per-date
+  pricing, blocked dates, editable site copy — plus RLS policies.
+- `migrations/0002_welkin_bliss_storage_and_auth.sql` — the `welkin-bliss-photos`
+  Storage bucket + policies, and a trigger that auto-links a Supabase Auth user to
+  their pre-seeded `welkin_bliss_users` row on sign-up.
+- `seed.sql` — optional sample properties, site copy, and one admin row.
 
-## Apply
+All migrations are **idempotent** — safe to re-run.
+
+## Set up the database (one command)
+`setup.sh` applies every migration in order (and optionally the seed) via `psql`.
+
 ```bash
-supabase db push          # or: supabase migration up
-# Regenerate the typed schema consumed by the apps (SSOT for the data model):
+# Schema + Storage only:
+DATABASE_URL='postgres://…' ./supabase/setup.sh
+
+# …plus sample data and an admin user:
+DATABASE_URL='postgres://…' ADMIN_EMAIL='you@example.com' ./supabase/setup.sh --seed
+```
+Get `DATABASE_URL` from the Supabase dashboard (Project Settings → Database →
+Connection string), or from `supabase start` for a local stack
+(`postgresql://postgres:postgres@127.0.0.1:54322/postgres`). With no
+`DATABASE_URL` but the Supabase CLI installed, it falls back to `supabase db push`
+(schema only). Run `./supabase/setup.sh --help` for details.
+
+After seeding, create the admin's Supabase Auth user (dashboard → Authentication),
+using the same email — first sign-in links them to the admin row automatically.
+
+## Regenerate typed schema (after any schema change)
+```bash
 supabase gen types typescript --schema public > libs/db/src/types.ts
 ```
 
