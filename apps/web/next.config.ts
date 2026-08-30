@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
 
   // Transpile workspace packages consumed as TS source.
-  transpilePackages: ["@welkinbliss/ui", "@welkinbliss/availability"],
+  transpilePackages: ["@welkinbliss/ui", "@welkinbliss/availability", "@welkinbliss/db"],
 
   images: {
     formats: ["image/avif", "image/webp"],

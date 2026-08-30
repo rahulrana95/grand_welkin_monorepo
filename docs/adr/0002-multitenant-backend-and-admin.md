@@ -78,5 +78,11 @@ timestamps) ·
    (`libs/availability`), public **WhatsApp booking + availability calendar**.
 2. **Next:** `apps/admin` app (properties CRUD, per-date pricing with copy-to-range, block
    dates, site-copy editor) against repository interfaces + mock.
-3. **Then:** wire Supabase (Auth/DB/Storage), the image variant pipeline, and the real
-   Uplisting client + webhook revalidation.
+3. **This PR:** wire Supabase against the hosted project — env-gated typed clients
+   ([`@welkinbliss/db`](../../libs/db/)), a Supabase-backed admin repository + Supabase
+   Auth (admin/staff only), and admin blocked-dates / per-date prices merged into the
+   public availability calendar. All behind `hasSupabase()` with the mocks as the
+   fallback, so the monorepo builds and its visual tests pass without credentials.
+4. **Then:** photo upload UI + the async `sharp` image variant pipeline, editable
+   site-copy consumed by the public site, and the real Uplisting client + webhook
+   `revalidateTag`.

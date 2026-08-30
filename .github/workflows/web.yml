@@ -4,10 +4,10 @@ name: web (WelkinBliss)
 # Separate from bazel.yml (cross-language) and buf.yml (proto). See docs 04 §5.
 on:
   pull_request:
-    paths: ["apps/web/**", "libs/ui/**", "pnpm-lock.yaml"]
+    paths: ["apps/web/**", "libs/ui/**", "libs/availability/**", "libs/db/**", "pnpm-lock.yaml"]
   push:
     branches: [main]
-    paths: ["apps/web/**", "libs/ui/**"]
+    paths: ["apps/web/**", "libs/ui/**", "libs/availability/**", "libs/db/**"]
 
 jobs:
   build-test:

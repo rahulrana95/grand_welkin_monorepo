@@ -27,8 +27,9 @@ export default async function LoginPage({ searchParams }: LoginProps) {
         <input type="hidden" name="next" value={next ?? "/"} />
         <button type="submit" className="btn btn--primary">Sign in</button>
         <p className="muted" style={{ fontSize: "0.78rem", margin: 0 }}>
-          Mock auth — allowlisted email + any password (Supabase Auth replaces this). Default:
-          {" "}<code>admin@welkinbliss.com</code>.
+          Authenticated via Supabase (admin/staff only) when configured. Without a
+          backend it falls back to mock auth — an allowlisted email + any password,
+          default <code>admin@welkinbliss.com</code>.
         </p>
       </form>
     </div>
