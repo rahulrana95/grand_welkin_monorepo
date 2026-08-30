@@ -3,10 +3,10 @@ name: admin (WelkinBliss)
 # Independent per-app pipeline for the admin app.
 on:
   pull_request:
-    paths: ["apps/admin/**", "libs/ui/**", "libs/db/**", "pnpm-lock.yaml"]
+    paths: ["apps/admin/**", "libs/ui/**", "libs/db/**", "libs/images/**", "pnpm-lock.yaml"]
   push:
     branches: [main]
-    paths: ["apps/admin/**", "libs/ui/**", "libs/db/**"]
+    paths: ["apps/admin/**", "libs/ui/**", "libs/db/**", "libs/images/**"]
 
 jobs:
   build-test:

@@ -57,10 +57,6 @@ export function PropertyForm({ action, property, submitLabel }: PropertyFormProp
       <div className="row">
         <button type="submit" className="btn btn--primary">{submitLabel}</button>
       </div>
-
-      <p className="muted" style={{ fontSize: "0.8rem", margin: 0 }}>
-        Photos upload to Supabase Storage with an async multi-size pipeline (ADR 0002 §5) — wired next.
-      </p>
     </form>
   );
 }

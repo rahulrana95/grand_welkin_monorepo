@@ -33,6 +33,14 @@ export interface AdminProperty {
 
 export type PropertyInput = Omit<AdminProperty, "id" | "photos">;
 
+/** A newly uploaded original image, before Storage/variant processing. */
+export interface PhotoInput {
+  readonly data: Uint8Array;
+  readonly filename: string;
+  readonly contentType: string;
+  readonly alt?: string;
+}
+
 export interface SiteCopy {
   readonly key: string;
   readonly value: string;
@@ -53,6 +61,13 @@ export interface Repo {
 
   getBlocked(propertyId: string): Promise<ReadonlySet<string>>;
   toggleBlocked(propertyId: string, date: string): Promise<void>;
+
+  /** Upload originals → Storage + responsive variants; append to the property. */
+  addPhotos(propertyId: string, photos: readonly PhotoInput[]): Promise<void>;
+  deletePhoto(propertyId: string, photoId: string): Promise<void>;
+  /** Reorder a photo within its property (swaps sort with its neighbour). */
+  movePhoto(propertyId: string, photoId: string, direction: "up" | "down"): Promise<void>;
+  updatePhotoAlt(propertyId: string, photoId: string, alt: string): Promise<void>;
 
   listSiteCopy(): Promise<readonly SiteCopy[]>;
   updateSiteCopy(key: string, value: string): Promise<void>;

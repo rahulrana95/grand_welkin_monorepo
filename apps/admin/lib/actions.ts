@@ -99,6 +99,35 @@ export async function toggleBlocked(propertyId: string, date: string) {
   revalidatePath(`/properties/${propertyId}`);
 }
 
+// ── Photos ─────────────────────────────────────────────────────────────────
+export async function uploadPhotos(propertyId: string, formData: FormData) {
+  const files = formData.getAll("photos").filter((f): f is File => f instanceof File && f.size > 0);
+  const inputs = await Promise.all(
+    files.map(async (file) => ({
+      data: new Uint8Array(await file.arrayBuffer()),
+      filename: file.name,
+      contentType: file.type || "application/octet-stream",
+    })),
+  );
+  if (inputs.length > 0) await getRepo().addPhotos(propertyId, inputs);
+  revalidatePath(`/properties/${propertyId}`);
+}
+
+export async function deletePhoto(propertyId: string, photoId: string) {
+  await getRepo().deletePhoto(propertyId, photoId);
+  revalidatePath(`/properties/${propertyId}`);
+}
+
+export async function movePhoto(propertyId: string, photoId: string, direction: "up" | "down") {
+  await getRepo().movePhoto(propertyId, photoId, direction);
+  revalidatePath(`/properties/${propertyId}`);
+}
+
+export async function updatePhotoAlt(propertyId: string, photoId: string, alt: string) {
+  await getRepo().updatePhotoAlt(propertyId, photoId, alt);
+  revalidatePath(`/properties/${propertyId}`);
+}
+
 // ── Site copy ────────────────────────────────────────────────────────────────
 export async function updateSiteCopy(formData: FormData) {
   await getRepo().updateSiteCopy(String(formData.get("key")), String(formData.get("value")));
