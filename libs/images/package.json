@@ -1,0 +1,14 @@
+{
+  "name": "@welkinbliss/images",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Responsive image variant generation (sharp) for WelkinBliss property photos.",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "sharp": "^0.35.0"
+  }
+}

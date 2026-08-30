@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PhotoManager } from "@/components/PhotoManager";
 import { PricingCalendar } from "@/components/PricingCalendar";
 import { PropertyForm } from "@/components/PropertyForm";
 import { updateProperty } from "@/lib/actions";
@@ -32,6 +33,8 @@ export default async function EditPropertyPage({ params }: PageProps) {
         </div>
         <span className={`badge badge--${property.status}`}>{property.status}</span>
       </div>
+
+      <PhotoManager propertyId={property.id} photos={property.photos} />
 
       <PricingCalendar
         propertyId={property.id}

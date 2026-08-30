@@ -1,10 +1,22 @@
 import "server-only";
-import { PHOTOS_BUCKET, type Database, type WelkinDbClient } from "@welkinbliss/db";
-import type { AdminProperty, PropertyInput, PropertyPhoto, Repo, SiteCopy } from "./types";
+import { PHOTOS_BUCKET, type Database, type PhotoVariant, type WelkinDbClient } from "@welkinbliss/db";
+import { generateVariants } from "@welkinbliss/images";
+import type { AdminProperty, PhotoInput, PropertyInput, PropertyPhoto, Repo, SiteCopy } from "./types";
 
 type Tables = Database["public"]["Tables"];
 type PropertyRow = Tables["welkin_bliss_properties"]["Row"];
 type PhotoRow = Tables["welkin_bliss_property_photos"]["Row"];
+
+const EXT_BY_TYPE: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/avif": "avif",
+  "image/gif": "gif",
+};
+
+const extFor = (contentType: string, filename: string): string =>
+  EXT_BY_TYPE[contentType] ?? filename.split(".").pop()?.toLowerCase() ?? "bin";
 
 const eachDate = (from: string, to: string): string[] => {
   const out: string[] = [];
@@ -183,6 +195,106 @@ export class SupabaseRepo implements Repo {
         .insert({ property_id: propertyId, date });
       if (insErr) throw new Error(insErr.message);
     }
+  }
+
+  // ── Photos: Storage + responsive variants (ADR 0002 §5) ────────────────────
+  async addPhotos(propertyId: string, photos: readonly PhotoInput[]): Promise<void> {
+    const bucket = this.db.storage.from(PHOTOS_BUCKET);
+    const { data: last } = await this.db
+      .from("welkin_bliss_property_photos")
+      .select("sort")
+      .eq("property_id", propertyId)
+      .order("sort", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    let sort = last?.sort ?? -1;
+
+    for (const photo of photos) {
+      const id = crypto.randomUUID();
+      const dir = `${propertyId}/${id}`;
+      const original = Buffer.from(photo.data);
+      const originalPath = `${dir}/original.${extFor(photo.contentType, photo.filename)}`;
+
+      const { error: upErr } = await bucket.upload(originalPath, original, {
+        contentType: photo.contentType,
+        upsert: true,
+      });
+      if (upErr) throw new Error(upErr.message);
+
+      // Variants are best-effort: a decode/encode failure must not lose the upload.
+      let variants: PhotoVariant[] = [];
+      let width: number | null = null;
+      let height: number | null = null;
+      try {
+        const result = await generateVariants(original);
+        width = result.source.width;
+        height = result.source.height;
+        for (const v of result.variants) {
+          const path = `${dir}/${v.width}.${v.format}`;
+          const { error } = await bucket.upload(path, v.data, { contentType: v.contentType, upsert: true });
+          if (!error) variants.push({ width: v.width, format: v.format, path });
+        }
+      } catch {
+        variants = [];
+      }
+
+      const { error: insErr } = await this.db.from("welkin_bliss_property_photos").insert({
+        id,
+        property_id: propertyId,
+        storage_path: originalPath,
+        alt: photo.alt ?? null,
+        sort: ++sort,
+        width,
+        height,
+        variants,
+      });
+      if (insErr) throw new Error(insErr.message);
+    }
+  }
+
+  async deletePhoto(propertyId: string, photoId: string): Promise<void> {
+    const { data, error } = await this.db
+      .from("welkin_bliss_property_photos")
+      .select("storage_path, variants")
+      .eq("id", photoId)
+      .eq("property_id", propertyId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!data) return;
+
+    const paths = [data.storage_path, ...data.variants.map((v) => v.path)];
+    await this.db.storage.from(PHOTOS_BUCKET).remove(paths);
+    const { error: delErr } = await this.db.from("welkin_bliss_property_photos").delete().eq("id", photoId);
+    if (delErr) throw new Error(delErr.message);
+  }
+
+  async movePhoto(propertyId: string, photoId: string, direction: "up" | "down"): Promise<void> {
+    const { data, error } = await this.db
+      .from("welkin_bliss_property_photos")
+      .select("id, sort")
+      .eq("property_id", propertyId)
+      .order("sort", { ascending: true });
+    if (error) throw new Error(error.message);
+    const list = data ?? [];
+    const i = list.findIndex((p) => p.id === photoId);
+    const j = direction === "up" ? i - 1 : i + 1;
+    const a = list[i];
+    const b = list[j];
+    if (!a || !b) return;
+    // Swap sort values (two independent updates).
+    const r1 = await this.db.from("welkin_bliss_property_photos").update({ sort: b.sort }).eq("id", a.id);
+    if (r1.error) throw new Error(r1.error.message);
+    const r2 = await this.db.from("welkin_bliss_property_photos").update({ sort: a.sort }).eq("id", b.id);
+    if (r2.error) throw new Error(r2.error.message);
+  }
+
+  async updatePhotoAlt(propertyId: string, photoId: string, alt: string): Promise<void> {
+    const { error } = await this.db
+      .from("welkin_bliss_property_photos")
+      .update({ alt })
+      .eq("id", photoId)
+      .eq("property_id", propertyId);
+    if (error) throw new Error(error.message);
   }
 
   async listSiteCopy(): Promise<readonly SiteCopy[]> {

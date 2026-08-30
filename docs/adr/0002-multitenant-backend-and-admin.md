@@ -86,5 +86,8 @@ timestamps) ·
 4. **Editable site copy (done):** the public site reads `welkin_bliss_site_copy`
    (Supabase over defaults, cached + tagged) for the home hero and footer; the admin
    triggers on-demand revalidation (`/api/revalidate`) after an edit.
-5. **Then:** photo upload UI + the async `sharp` image variant pipeline, and the real
-   Uplisting client + webhook `revalidateTag`.
+5. **Photos (done):** admin photo library — upload (multiple), reorder, alt text,
+   delete — storing originals in Supabase Storage and generating responsive AVIF/WebP
+   variants (`@welkinbliss/images`, `sharp`) recorded on `…_photos.variants`.
+   (Public property pages consume these once the public catalogue reads from Supabase.)
+6. **Then:** the real Uplisting client + webhook `revalidateTag`.

@@ -35,6 +35,9 @@ importers:
       '@welkinbliss/db':
         specifier: workspace:*
         version: link:../../libs/db
+      '@welkinbliss/images':
+        specifier: workspace:*
+        version: link:../../libs/images
       '@welkinbliss/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -118,6 +121,12 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.45.0
         version: 2.112.4
+
+  libs/images:
+    dependencies:
+      sharp:
+        specifier: ^0.35.0
+        version: 0.35.4(@types/node@22.20.1)
 
   libs/ui: {}
 
@@ -1227,8 +1236,7 @@ snapshots:
   '@esbuild/win32-x64@0.21.5':
     optional: true
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.35.4':
     optionalDependencies:
@@ -1584,8 +1592,7 @@ snapshots:
 
   deep-eql@5.0.2: {}
 
-  detect-libc@2.1.2:
-    optional: true
+  detect-libc@2.1.2: {}
 
   es-module-lexer@1.7.0: {}
 
@@ -1731,8 +1738,7 @@ snapshots:
 
   scheduler@0.27.0: {}
 
-  semver@7.8.5:
-    optional: true
+  semver@7.8.5: {}
 
   sharp@0.35.4(@types/node@22.20.1):
     dependencies:
@@ -1766,7 +1772,6 @@ snapshots:
       '@img/sharp-win32-ia32': 0.35.4
       '@img/sharp-win32-x64': 0.35.4
       '@types/node': 22.20.1
-    optional: true
 
   siginfo@2.0.0: {}
 
