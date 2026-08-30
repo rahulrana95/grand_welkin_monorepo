@@ -100,6 +100,20 @@ export const propertyJsonLd = (property: Property, destination: Destination): Js
   };
 };
 
+/** ItemList for listing pages (collection / destination) — carousel eligibility. */
+export const itemListJsonLd = (name: string, properties: readonly Property[]): JsonLd => ({
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name,
+  numberOfItems: properties.length,
+  itemListElement: properties.map((p, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    url: absoluteUrl(`/villa/${p.slug}`),
+    name: p.name,
+  })),
+});
+
 /** Human-readable price line reused across UI + meta descriptions. */
 export const nightlyLine = (property: Property): string =>
   `From ${priceFormatted(property)}/night`;

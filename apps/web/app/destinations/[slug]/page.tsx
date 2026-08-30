@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Chips } from "@/components/Chips";
 import { JsonLd } from "@/components/JsonLd";
 import { PropertyCard } from "@/components/PropertyCard";
+import { collectionsForDestination } from "@/lib/collections";
 import { DESTINATIONS, getDestination, propertiesInDestination } from "@/lib/data";
-import { breadcrumbJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, itemListJsonLd } from "@/lib/seo";
 
 // ISR: destination pages are the long-tail SEO engine (docs 02 §1).
 export const revalidate = 3600;
@@ -35,25 +37,31 @@ export default async function DestinationPage({ params }: PageProps) {
   if (!destination) notFound();
 
   const properties = propertiesInDestination(slug);
+  const collections = collectionsForDestination(slug);
 
   return (
     <>
       <JsonLd
-        data={breadcrumbJsonLd([
-          { name: "Home", path: "/" },
-          { name: destination.country, path: `/destinations/${destination.slug}` },
-          { name: destination.name },
-        ])}
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: destination.country, path: `/destinations/${destination.slug}` },
+            { name: destination.name },
+          ]),
+          itemListJsonLd(`Homes in ${destination.name}`, properties),
+        ]}
       />
 
       <section className="container" style={{ paddingTop: "2rem" }}>
         <div
-          className="arch"
           style={{
+            overflow: "hidden",
+            borderRadius: "clamp(16px, 12vw, 200px) clamp(16px, 12vw, 200px) 16px 16px",
             minHeight: "min(46vh, 420px)",
             display: "grid",
             alignItems: "end",
             padding: "clamp(1.5rem, 5vw, 3.5rem)",
+            paddingTop: "clamp(3rem, 10vw, 7rem)",
             color: "#fff",
             background: `radial-gradient(120% 100% at 50% 120%, ${destination.gradient[1]}, ${destination.gradient[0]} 55%, #0F1A1E 130%)`,
           }}
@@ -72,6 +80,16 @@ export default async function DestinationPage({ params }: PageProps) {
       <section className="container" style={{ paddingBlock: "2rem", maxWidth: 760 }}>
         <p style={{ fontSize: "1.15rem" }}>{destination.summary}</p>
         <p className="muted"><strong>Best time to visit:</strong> {destination.bestTime}</p>
+        <div style={{ marginTop: "1.25rem" }}>
+          <p className="eyebrow" style={{ marginBottom: "0.5rem" }}>Browse {destination.name} by</p>
+          <Chips
+            label={`Collections in ${destination.name}`}
+            items={collections.map((c) => ({
+              label: c.title,
+              href: `/collections/${c.slug}/${destination.slug}`,
+            }))}
+          />
+        </div>
       </section>
 
       <section className="container section" style={{ paddingTop: 0 }}>
