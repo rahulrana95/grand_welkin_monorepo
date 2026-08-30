@@ -1,0 +1,45 @@
+name: admin (WelkinBliss)
+
+# Independent per-app pipeline for the admin app.
+on:
+  pull_request:
+    paths: ["apps/admin/**", "libs/ui/**", "pnpm-lock.yaml"]
+  push:
+    branches: [main]
+    paths: ["apps/admin/**", "libs/ui/**"]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @welkinbliss/admin typecheck
+      - run: pnpm --filter @welkinbliss/admin build
+
+  visual:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @welkinbliss/admin build
+      - name: Visual regression
+        run: pnpm --filter @welkinbliss/admin test:visual
+        env: { CI: "true" }
+      - name: Upload Playwright report (diffs)
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-playwright-report
+          path: apps/admin/playwright-report/
+          retention-days: 14
