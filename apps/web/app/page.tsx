@@ -2,8 +2,9 @@ import Link from "next/link";
 import { CollectionCard } from "@/components/CollectionCard";
 import { PropertyCard } from "@/components/PropertyCard";
 import { SearchBar } from "@/components/SearchBar";
+import { getProperties } from "@/lib/catalogue";
 import { COLLECTIONS } from "@/lib/collections";
-import { DESTINATIONS, PROPERTIES } from "@/lib/data";
+import { DESTINATIONS } from "@/lib/data";
 import { getSiteCopy } from "@/lib/site-copy";
 
 /** Illustrative proof points (owned/operated trust story). Replace with real figures. */
@@ -14,7 +15,7 @@ const PROOF: readonly { readonly figure: string; readonly label: string }[] = [
 ];
 
 export default async function HomePage() {
-  const copy = await getSiteCopy();
+  const [copy, properties] = await Promise.all([getSiteCopy(), getProperties()]);
   return (
     <>
       {/* Restrained arched hero — hands off to inventory quickly (docs 01). */}
@@ -53,7 +54,7 @@ export default async function HomePage() {
           </div>
         </header>
         <div className="grid">
-          {PROPERTIES.map((p) => (
+          {properties.map((p) => (
             <PropertyCard key={p.slug} property={p} />
           ))}
         </div>

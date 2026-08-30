@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Collection } from "@/lib/collections";
 import { propertiesInCollection } from "@/lib/collections";
 
-export function CollectionCard({ collection }: { readonly collection: Collection }) {
-  const count = propertiesInCollection(collection.slug).length;
+export async function CollectionCard({ collection }: { readonly collection: Collection }) {
+  const count = (await propertiesInCollection(collection.slug)).length;
   return (
     <Link href={`/collections/${collection.slug}`} className="card" style={{ color: "var(--wb-text)" }}>
       <div

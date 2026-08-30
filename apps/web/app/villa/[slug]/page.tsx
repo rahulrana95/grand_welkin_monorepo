@@ -4,16 +4,17 @@ import { BookingPanel } from "@/components/BookingPanel";
 import { Chips } from "@/components/Chips";
 import { JsonLd } from "@/components/JsonLd";
 import { Photo } from "@/components/Photo";
+import { getProperties, getPropertyBySlug } from "@/lib/catalogue";
 import { COLLECTIONS } from "@/lib/collections";
-import { getDestination, getProperty, PROPERTIES } from "@/lib/data";
+import { getDestination } from "@/lib/data";
 import { breadcrumbJsonLd, nightlyLine, propertyJsonLd } from "@/lib/seo";
 import { priceFormatted } from "@/lib/types";
 
 // ISR + on-demand revalidation target (docs 02 §1).
 export const revalidate = 3600;
 
-export function generateStaticParams(): { slug: string }[] {
-  return PROPERTIES.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
+  return (await getProperties()).map((p) => ({ slug: p.slug }));
 }
 
 interface PageProps {
@@ -22,7 +23,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const property = getProperty(slug);
+  const property = await getPropertyBySlug(slug);
   const destination = property && getDestination(property.destinationSlug);
   if (!property || !destination) return {};
   const title = `${property.name}, ${destination.name} — Sleeps ${property.sleeps}`;
@@ -37,12 +38,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PropertyPage({ params }: PageProps) {
   const { slug } = await params;
-  const property = getProperty(slug);
+  const property = await getPropertyBySlug(slug);
   if (!property) notFound();
   const destination = getDestination(property.destinationSlug);
   if (!destination) notFound();
 
   const matchingCollections = COLLECTIONS.filter((c) => c.match(property, destination));
+  const [hero, second, third] = property.images ?? [];
 
   return (
     <>
@@ -65,13 +67,15 @@ export default async function PropertyPage({ params }: PageProps) {
 
         {/* Gallery — LCP hero + thumbs */}
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "0.6rem" }}>
-          <Photo gradient={property.gradient} alt={`${property.name} — main view`} ratio="16 / 10" arch priority />
+          <Photo gradient={property.gradient} image={hero} sizes="(max-width: 900px) 100vw, 66vw" alt={`${property.name} — main view`} ratio="16 / 10" arch priority />
           <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: "0.6rem" }}>
-            <Photo gradient={[property.gradient[1], property.gradient[0]]} alt={`${property.name} — interior`} ratio="16 / 9" />
-            <Photo gradient={property.gradient} alt={`${property.name} — view`} ratio="16 / 9">
-              <span className="btn btn--ghost" style={{ background: "rgba(255,255,255,.85)" }}>
-                +{property.photoCount} photos
-              </span>
+            <Photo gradient={[property.gradient[1], property.gradient[0]]} image={second} sizes="33vw" alt={`${property.name} — interior`} ratio="16 / 9" />
+            <Photo gradient={property.gradient} image={third} sizes="33vw" alt={`${property.name} — view`} ratio="16 / 9">
+              {property.photoCount > 0 ? (
+                <span className="btn btn--ghost" style={{ background: "rgba(255,255,255,.85)" }}>
+                  +{property.photoCount} photos
+                </span>
+              ) : null}
             </Photo>
           </div>
         </div>
@@ -85,8 +89,8 @@ export default async function PropertyPage({ params }: PageProps) {
           <p className="eyebrow">{destination.name}, {destination.country}</p>
           <h1>{property.name}</h1>
           <p className="muted" style={{ fontSize: "1.05rem" }}>
-            Sleeps {property.sleeps} · {property.bedrooms} bedrooms · {property.bathrooms} bathrooms ·
-            {" "}★ {property.rating.toFixed(1)} ({property.reviewCount} reviews)
+            Sleeps {property.sleeps} · {property.bedrooms} bedrooms · {property.bathrooms} bathrooms
+            {property.reviewCount > 0 ? <> · ★ {property.rating.toFixed(1)} ({property.reviewCount} reviews)</> : null}
           </p>
 
           {/* Answer-first overview (GEO/AEO) */}
@@ -101,6 +105,8 @@ export default async function PropertyPage({ params }: PageProps) {
             ))}
           </ul>
 
+          {property.reviews.length > 0 ? (
+          <>
           <h2 style={{ marginTop: "2rem", fontSize: "1.6rem" }}>
             Loved by guests · ★ {property.rating.toFixed(1)}
           </h2>
@@ -114,6 +120,8 @@ export default async function PropertyPage({ params }: PageProps) {
               </blockquote>
             ))}
           </div>
+          </>
+          ) : null}
         </article>
 
         <aside>

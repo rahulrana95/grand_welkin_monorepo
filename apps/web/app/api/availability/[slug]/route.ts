@@ -4,7 +4,7 @@ import {
   UplistingAvailabilityProvider,
   mergeOverrides,
 } from "@welkinbliss/availability";
-import { getProperty } from "@/lib/data";
+import { getPropertyBySlug } from "@/lib/catalogue";
 import { getAdminOverrides } from "@/lib/overrides";
 
 const addDays = (iso: string, days: number): string => {
@@ -24,7 +24,7 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
-  const property = getProperty(slug);
+  const property = await getPropertyBySlug(slug);
   if (!property) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const url = new URL(request.url);

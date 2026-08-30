@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { AUTH_COOKIE, getSession, isAllowed } from "./auth";
 import { getRepo } from "./repo";
 import type { PropertyInput, PropertyStatus } from "./repo";
-import { revalidateWebSiteCopy } from "./revalidate-web";
+import { revalidateWeb } from "./revalidate-web";
 import { createSupabaseServerClient } from "./supabase-server";
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
@@ -78,6 +78,7 @@ function readPropertyInput(formData: FormData): PropertyInput {
 export async function createProperty(formData: FormData) {
   const property = await getRepo().createProperty(readPropertyInput(formData));
   revalidatePath("/properties");
+  await revalidateWeb("catalogue");
   redirect(`/properties/${property.id}`);
 }
 
@@ -86,6 +87,7 @@ export async function updateProperty(formData: FormData) {
   await getRepo().updateProperty(id, readPropertyInput(formData));
   revalidatePath(`/properties/${id}`);
   revalidatePath("/properties");
+  await revalidateWeb("catalogue");
 }
 
 // ── Pricing & blocking (called from the client calendar) ────────────────────
@@ -111,26 +113,30 @@ export async function uploadPhotos(propertyId: string, formData: FormData) {
   );
   if (inputs.length > 0) await getRepo().addPhotos(propertyId, inputs);
   revalidatePath(`/properties/${propertyId}`);
+  await revalidateWeb("catalogue");
 }
 
 export async function deletePhoto(propertyId: string, photoId: string) {
   await getRepo().deletePhoto(propertyId, photoId);
   revalidatePath(`/properties/${propertyId}`);
+  await revalidateWeb("catalogue");
 }
 
 export async function movePhoto(propertyId: string, photoId: string, direction: "up" | "down") {
   await getRepo().movePhoto(propertyId, photoId, direction);
   revalidatePath(`/properties/${propertyId}`);
+  await revalidateWeb("catalogue");
 }
 
 export async function updatePhotoAlt(propertyId: string, photoId: string, alt: string) {
   await getRepo().updatePhotoAlt(propertyId, photoId, alt);
   revalidatePath(`/properties/${propertyId}`);
+  await revalidateWeb("catalogue");
 }
 
 // ── Site copy ────────────────────────────────────────────────────────────────
 export async function updateSiteCopy(formData: FormData) {
   await getRepo().updateSiteCopy(String(formData.get("key")), String(formData.get("value")));
   revalidatePath("/site-copy");
-  await revalidateWebSiteCopy(); // best-effort: refresh the public site's cached copy
+  await revalidateWeb("site-copy"); // best-effort: refresh the public site's cached copy
 }

@@ -34,6 +34,24 @@ export interface Destination {
   readonly gradient: readonly [string, string];
 }
 
+export type ImageFormat = "avif" | "webp";
+
+export interface ImageVariant {
+  readonly url: string;
+  readonly width: number;
+  readonly format: ImageFormat;
+}
+
+/** A real property photo (original + responsive variants). */
+export interface PropertyImage {
+  /** Original object URL — the `<img>` fallback. */
+  readonly src: string;
+  readonly alt: string;
+  readonly width: number | null;
+  readonly height: number | null;
+  readonly variants: readonly ImageVariant[];
+}
+
 export interface Property {
   readonly slug: string;
   readonly name: string;
@@ -51,9 +69,11 @@ export interface Property {
   readonly lng: number;
   readonly amenities: readonly Amenity[];
   readonly reviews: readonly Review[];
-  /** Brand-gradient placeholders standing in for the AVIF photo set. */
+  /** Brand-gradient placeholder, shown when the property has no `images`. */
   readonly gradient: readonly [string, string];
   readonly photoCount: number;
+  /** Real photos from the CMS; when present they replace the gradient placeholder. */
+  readonly images?: readonly PropertyImage[];
 }
 
 export const priceFormatted = (property: Property): string =>

@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import { Chips } from "@/components/Chips";
 import { JsonLd } from "@/components/JsonLd";
 import { PropertyCard } from "@/components/PropertyCard";
+import { getPropertiesInDestination } from "@/lib/catalogue";
 import { collectionsForDestination } from "@/lib/collections";
-import { DESTINATIONS, getDestination, propertiesInDestination } from "@/lib/data";
+import { DESTINATIONS, getDestination } from "@/lib/data";
 import { breadcrumbJsonLd, itemListJsonLd } from "@/lib/seo";
 
 // ISR: destination pages are the long-tail SEO engine (docs 02 §1).
@@ -36,8 +37,10 @@ export default async function DestinationPage({ params }: PageProps) {
   const destination = getDestination(slug);
   if (!destination) notFound();
 
-  const properties = propertiesInDestination(slug);
-  const collections = collectionsForDestination(slug);
+  const [properties, collections] = await Promise.all([
+    getPropertiesInDestination(slug),
+    collectionsForDestination(slug),
+  ]);
 
   return (
     <>

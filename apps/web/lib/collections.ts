@@ -1,4 +1,5 @@
-import { DESTINATIONS, PROPERTIES, getDestination } from "./data";
+import { getProperties } from "./catalogue";
+import { DESTINATIONS, getDestination } from "./data";
 import type { Destination, Property } from "./types";
 
 /**
@@ -73,35 +74,48 @@ export const getCollection = (slug: string): Collection | undefined =>
 const destinationOf = (property: Property): Destination | undefined =>
   getDestination(property.destinationSlug);
 
-export const propertiesInCollection = (slug: string): readonly Property[] => {
+export const propertiesInCollection = async (slug: string): Promise<readonly Property[]> => {
   const collection = getCollection(slug);
   if (!collection) return [];
-  return PROPERTIES.filter((p) => {
+  const properties = await getProperties();
+  return properties.filter((p) => {
     const d = destinationOf(p);
     return d !== undefined && collection.match(p, d);
   });
 };
 
-export const propertiesInCollectionAndDestination = (
+export const propertiesInCollectionAndDestination = async (
   collectionSlug: string,
   destinationSlug: string,
-): readonly Property[] =>
-  propertiesInCollection(collectionSlug).filter((p) => p.destinationSlug === destinationSlug);
+): Promise<readonly Property[]> =>
+  (await propertiesInCollection(collectionSlug)).filter((p) => p.destinationSlug === destinationSlug);
 
 /** Destinations that have at least one property in the collection. */
-export const destinationsInCollection = (slug: string): readonly Destination[] => {
-  const slugs = new Set(propertiesInCollection(slug).map((p) => p.destinationSlug));
+export const destinationsInCollection = async (slug: string): Promise<readonly Destination[]> => {
+  const slugs = new Set((await propertiesInCollection(slug)).map((p) => p.destinationSlug));
   return DESTINATIONS.filter((d) => slugs.has(d.slug));
 };
 
 /** Collections that have at least one property in the destination. */
-export const collectionsForDestination = (destinationSlug: string): readonly Collection[] =>
-  COLLECTIONS.filter((c) =>
-    propertiesInCollection(c.slug).some((p) => p.destinationSlug === destinationSlug),
+export const collectionsForDestination = async (
+  destinationSlug: string,
+): Promise<readonly Collection[]> => {
+  const results = await Promise.all(
+    COLLECTIONS.map(async (c) =>
+      (await propertiesInCollection(c.slug)).some((p) => p.destinationSlug === destinationSlug) ? c : null,
+    ),
   );
+  return results.filter((c): c is Collection => c !== null);
+};
 
 /** Every geo × theme combo that actually has inventory — drives generateStaticParams. */
-export const validIntersections = (): readonly { collection: string; destination: string }[] =>
-  COLLECTIONS.flatMap((c) =>
-    destinationsInCollection(c.slug).map((d) => ({ collection: c.slug, destination: d.slug })),
+export const validIntersections = async (): Promise<
+  readonly { collection: string; destination: string }[]
+> => {
+  const perCollection = await Promise.all(
+    COLLECTIONS.map(async (c) =>
+      (await destinationsInCollection(c.slug)).map((d) => ({ collection: c.slug, destination: d.slug })),
+    ),
   );
+  return perCollection.flat();
+};
