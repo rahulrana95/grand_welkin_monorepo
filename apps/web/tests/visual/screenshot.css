@@ -1,0 +1,17 @@
+/* Injected at capture time to make screenshots deterministic. */
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition: none !important;
+  caret-color: transparent !important;
+  scroll-behavior: auto !important;
+}
+
+/* Scrollbar width differs across OSes — hide it. */
+::-webkit-scrollbar {
+  display: none !important;
+}
+html {
+  scrollbar-width: none !important;
+}

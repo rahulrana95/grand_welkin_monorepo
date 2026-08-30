@@ -32,3 +32,9 @@ __pycache__/
 apps/**/.next/
 *.tsbuildinfo
 .vercel
+
+# Playwright (keep __screenshots__ baselines; ignore run artifacts)
+test-results/
+playwright-report/
+apps/web/test-results/
+apps/web/playwright-report/

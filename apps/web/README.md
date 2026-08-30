@@ -31,7 +31,34 @@ pnpm --filter @welkinbliss/web build && pnpm --filter @welkinbliss/web start
 - `/destinations/[slug]` — destination landing (answer-first summary + property grid)
 - `/villa/[slug]` — property detail (gallery, amenities, reviews, booking island, full JSON-LD)
 
+## Visual regression testing
+
+Every page and every component has a committed **baseline screenshot**; CI diffs each
+change against it (Playwright `toHaveScreenshot`, per the `testing-visual-playwright`
+skill). Baselines live in `tests/visual/__screenshots__/` and are reviewed in the PR.
+
+```bash
+# run against baselines (what CI does)
+pnpm --filter @welkinbliss/web build
+pnpm --filter @welkinbliss/web test:visual
+
+# intentional UI change → regenerate & commit the new baselines IN THE SAME PR
+pnpm --filter @welkinbliss/web test:visual:update
+```
+
+- **Pages** (`tests/visual/pages.spec.ts`): full-page shots of every route.
+- **Components** (`tests/visual/components.spec.ts`): each component is rendered on
+  `/ui-gallery` (a noindexed kitchen-sink page) and screenshotted in isolation, plus
+  the header/footer landmarks.
+- **Determinism** (`playwright.config.ts` + `tests/visual/screenshot.css`): fixed
+  viewport/scale, light theme, UTC, animations disabled, carets/scrollbars hidden.
+- **Environment parity:** baselines are generated and compared with **Playwright
+  1.62.1 / chromium-1194** — the same as CI's `mcr.microsoft.com/playwright:v1.62.1-noble`
+  image. Never regenerate on a dev machine with a different OS/browser. CI **never**
+  passes `--update-snapshots`; an unexpected diff fails the PR, and the Playwright
+  report (with the diff image) is uploaded as an artifact.
+
 ## Follow-ups
 - Replace `Photo` gradient placeholders with `next/image` (AVIF, `priority` LCP hero) + real CDN imagery.
 - Enable PPR + a shared ISR cache handler (Redis) for multi-instance (see `next.config.ts`).
-- Add tests per the `testing-*` skills; wire the `web.yml` test/deploy steps.
+- Add functional tests (Vitest + MSW + Playwright e2e) per the `testing-*` skills; wire the deploy steps.
