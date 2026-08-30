@@ -1,5 +1,8 @@
 import { expect, test } from "@playwright/test";
 
+/** Fixed clock so date-dependent UI (the availability calendar) is deterministic. */
+const FIXED_TIME = new Date("2026-09-01T00:00:00Z");
+
 /**
  * Per-component visual baselines. Each component is rendered on /ui-gallery
  * wrapped in a [data-visual="<id>"] handle and screenshotted in isolation.
@@ -14,12 +17,13 @@ const COMPONENTS: readonly string[] = [
   "chips",
   "property-card",
   "collection-card",
-  "booking-widget",
+  "booking-panel",
   "search-bar",
 ];
 
 test.describe("components", () => {
   test.beforeEach(async ({ page }) => {
+    await page.clock.setFixedTime(FIXED_TIME);
     await page.goto("/ui-gallery", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
   });
@@ -36,6 +40,7 @@ test.describe("components", () => {
 // Global chrome (rendered by the layout on every page) — capture from home.
 test.describe("layout", () => {
   test("component: header", async ({ page }) => {
+    await page.clock.setFixedTime(FIXED_TIME);
     await page.goto("/", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
     // The site header is the `banner` landmark (section <header>s are not banners).
@@ -43,6 +48,7 @@ test.describe("layout", () => {
   });
 
   test("component: footer", async ({ page }) => {
+    await page.clock.setFixedTime(FIXED_TIME);
     await page.goto("/", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
     await expect(page.getByRole("contentinfo")).toHaveScreenshot("footer.png");

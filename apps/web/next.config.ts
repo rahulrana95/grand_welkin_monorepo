@@ -9,8 +9,8 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
 
-  // Transpile the workspace design-system package.
-  transpilePackages: ["@welkinbliss/ui"],
+  // Transpile workspace packages consumed as TS source.
+  transpilePackages: ["@welkinbliss/ui", "@welkinbliss/availability"],
 
   images: {
     formats: ["image/avif", "image/webp"],

@@ -13,6 +13,7 @@
     "test:visual:update": "playwright test --update-snapshots"
   },
   "dependencies": {
+    "@welkinbliss/availability": "workspace:*",
     "@welkinbliss/ui": "workspace:*",
     "next": "^15.5.0",
     "react": "^19.1.0",
