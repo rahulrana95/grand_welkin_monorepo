@@ -31,3 +31,30 @@ jobs:
         with:
           configPath: apps/web/lighthouserc.json
           uploadArtifacts: true
+
+  # Visual regression — compares every page & component against the committed
+  # baselines. Runs in the official Playwright image so rendering matches the
+  # baselines exactly (same chromium as playwright@1.62.1). NEVER --update-snapshots
+  # here; baselines are updated deliberately in a PR (see the app README).
+  visual:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @welkinbliss/web build
+      - name: Visual regression
+        run: pnpm --filter @welkinbliss/web test:visual
+        env: { CI: "true" }
+      - name: Upload Playwright report (diffs)
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 14
