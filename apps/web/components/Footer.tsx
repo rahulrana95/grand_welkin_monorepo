@@ -2,9 +2,11 @@ import Link from "next/link";
 import { COLLECTIONS } from "@/lib/collections";
 import { DESTINATIONS } from "@/lib/data";
 import { SITE } from "@/lib/site";
+import { getSiteCopy } from "@/lib/site-copy";
 import { Logo } from "./Logo";
 
-export function Footer() {
+export async function Footer() {
+  const copy = await getSiteCopy();
   return (
     <footer style={{ background: "var(--wb-surface-tinted)", borderTop: "1px solid var(--wb-border)" }}>
       <div
@@ -49,10 +51,22 @@ export function Footer() {
           </ul>
         </nav>
       </div>
-      <div className="container" style={{ paddingBlock: "1.5rem", borderTop: "1px solid var(--wb-border)" }}>
-        <p className="muted" style={{ fontSize: "0.85rem" }}>
+      <div
+        className="container"
+        style={{
+          paddingBlock: "1.5rem",
+          borderTop: "1px solid var(--wb-border)",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "0.5rem 1.5rem",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+        }}
+      >
+        <p className="muted" style={{ fontSize: "0.85rem", margin: 0 }}>
           © {new Date().getFullYear()} {SITE.name}. {SITE.tagline}.
         </p>
+        <p className="muted" style={{ fontSize: "0.85rem", margin: 0 }}>{copy["footer.promise"]}</p>
       </div>
     </footer>
   );

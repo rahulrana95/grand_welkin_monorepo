@@ -4,7 +4,7 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { SearchBar } from "@/components/SearchBar";
 import { COLLECTIONS } from "@/lib/collections";
 import { DESTINATIONS, PROPERTIES } from "@/lib/data";
-import { SITE } from "@/lib/site";
+import { getSiteCopy } from "@/lib/site-copy";
 
 /** Illustrative proof points (owned/operated trust story). Replace with real figures. */
 const PROOF: readonly { readonly figure: string; readonly label: string }[] = [
@@ -13,7 +13,8 @@ const PROOF: readonly { readonly figure: string; readonly label: string }[] = [
   { figure: "4.9★", label: "Average guest rating" },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const copy = await getSiteCopy();
   return (
     <>
       {/* Restrained arched hero — hands off to inventory quickly (docs 01). */}
@@ -34,11 +35,8 @@ export default function HomePage() {
         >
           <div style={{ maxWidth: 620 }}>
             <p className="eyebrow" style={{ color: "var(--wb-gold-40)" }}>Nature-forward stays</p>
-            <h1 style={{ color: "#fff", fontSize: "clamp(2.6rem, 6vw, 4.5rem)" }}>{SITE.tagline}.</h1>
-            <p style={{ fontSize: "1.15rem", opacity: 0.92, maxWidth: 520 }}>
-              A small collection of serene, light-filled homes — owned and cared for by
-              WelkinBliss, with hotel-grade calm and a 24/7 concierge.
-            </p>
+            <h1 style={{ color: "#fff", fontSize: "clamp(2.6rem, 6vw, 4.5rem)" }}>{copy["home.hero.tagline"]}.</h1>
+            <p style={{ fontSize: "1.15rem", opacity: 0.92, maxWidth: 520 }}>{copy["home.hero.subhead"]}</p>
           </div>
         </div>
         <div style={{ marginTop: "-2rem", position: "relative", zIndex: 2, paddingInline: "clamp(0px, 3vw, 3rem)" }}>
