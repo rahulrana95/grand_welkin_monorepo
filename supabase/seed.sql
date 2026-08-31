@@ -25,18 +25,18 @@ on conflict (key) do nothing;
 -- ── Sample properties (mirror the app''s mock catalogue) ──────────────────────
 insert into welkin_bliss_properties
   (slug, name, destination_slug, region, country, country_code, summary, description,
-   sleeps, bedrooms, bathrooms, base_price_cents, currency, status)
+   sleeps, bedrooms, bathrooms, base_price_cents, currency, status, amenity_keys)
 values
   ('villa-serena', 'Villa Serena', 'amalfi-coast', 'Campania', 'Italy', 'IT',
    'Cliffside villa with a private infinity pool above Positano.',
    'Five-bedroom cliffside home with chef service and sea views.',
-   10, 5, 6, 245000, 'EUR', 'published'),
+   10, 5, 6, 245000, 'EUR', 'published', '{pool,chef,ac,wifi}'),
   ('aspen-hearth-lodge', 'Hearth Lodge', 'aspen-snowmass', 'Colorado', 'United States', 'US',
    'Ski-in timber lodge with a stone fireplace and cedar sauna.',
    'Four-bedroom home built for firelit evenings and first-light air.',
-   8, 4, 4, 189000, 'USD', 'draft'),
+   8, 4, 4, 189000, 'USD', 'draft', '{fireplace,sauna,hottub,wifi}'),
   ('caldera-house', 'Caldera House', 'santorini', 'Cyclades', 'Greece', 'GR',
    'Whitewashed cave-house facing the caldera and the sunset.',
    'Three-bedroom cave-house carved into the cliff, water views throughout.',
-   6, 3, 3, 168000, 'EUR', 'published')
+   6, 3, 3, 168000, 'EUR', 'published', '{pool,wifi,ac}')
 on conflict (slug) do nothing;

@@ -1,5 +1,5 @@
 import "server-only";
-import { PHOTOS_BUCKET, type Database, type PhotoVariant, type WelkinDbClient } from "@welkinbliss/db";
+import { PHOTOS_BUCKET, resolveAmenityKeys, type Database, type PhotoVariant, type WelkinDbClient } from "@welkinbliss/db";
 import { generateVariants } from "@welkinbliss/images";
 import type { AdminProperty, PhotoInput, PropertyInput, PropertyPhoto, Repo, SiteCopy } from "./types";
 
@@ -59,6 +59,7 @@ export class SupabaseRepo implements Repo {
     currency: row.currency,
     status: row.status,
     uplistingPropertyId: row.uplisting_property_id,
+    amenityKeys: resolveAmenityKeys(row.amenity_keys ?? []),
     photos: [...photos].sort((a, b) => a.sort - b.sort).map(this.toPhoto),
   });
 
@@ -79,6 +80,7 @@ export class SupabaseRepo implements Repo {
       currency: input.currency,
       status: input.status,
       uplisting_property_id: input.uplistingPropertyId,
+      amenity_keys: [...resolveAmenityKeys(input.amenityKeys)],
     };
   }
 

@@ -1,8 +1,8 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
-import { PHOTOS_BUCKET, createAnonClient, type WelkinDbClient } from "@welkinbliss/db";
+import { PHOTOS_BUCKET, amenityByKey, createAnonClient, type WelkinDbClient } from "@welkinbliss/db";
 import { DESTINATIONS, PROPERTIES, getDestination } from "./data";
-import type { Property, PropertyImage } from "./types";
+import type { Amenity, Property, PropertyImage } from "./types";
 
 /**
  * The public property catalogue. Reads PUBLISHED properties (+ photos) from Supabase
@@ -23,6 +23,12 @@ const EDITORIAL = new Map(PROPERTIES.map((p) => [p.slug, p]));
 
 const gradientFor = (destinationSlug: string): readonly [string, string] =>
   getDestination(destinationSlug)?.gradient ?? ["#2F6D7F", "#E3BA38"];
+
+const amenitiesFromKeys = (keys: readonly string[]): readonly Amenity[] =>
+  keys
+    .map((key) => amenityByKey(key))
+    .filter((a): a is NonNullable<typeof a> => a !== undefined)
+    .map((a) => ({ label: a.label, schemaName: a.schemaName }));
 
 async function fetchFromSupabase(db: WelkinDbClient): Promise<readonly Property[]> {
   const storage = db.storage.from(PHOTOS_BUCKET);
@@ -78,7 +84,7 @@ async function fetchFromSupabase(db: WelkinDbClient): Promise<readonly Property[
       reviewCount: editorial?.reviewCount ?? 0,
       lat: row.lat ?? 0,
       lng: row.lng ?? 0,
-      amenities: editorial?.amenities ?? [],
+      amenities: row.amenity_keys.length > 0 ? amenitiesFromKeys(row.amenity_keys) : editorial?.amenities ?? [],
       reviews: editorial?.reviews ?? [],
       gradient: editorial?.gradient ?? gradientFor(row.destination_slug),
       photoCount: images.length || (editorial?.photoCount ?? 0),

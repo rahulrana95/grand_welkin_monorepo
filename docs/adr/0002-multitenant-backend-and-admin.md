@@ -94,7 +94,11 @@ timestamps) ·
    detail, explore, collections, sitemap, availability) read PUBLISHED properties +
    photos from Supabase via `lib/catalogue` (cached, tag `catalogue`), falling back to
    the mock catalogue; real photos render as responsive AVIF/WebP `<picture>` from the
-   variant set. Admin property/photo edits revalidate the `catalogue` tag. Editorial
-   fields not yet in the schema (amenities, reviews, theme) are enriched from the
-   curated set by slug, else defaulted — folding them into the DB is a later step.
-7. **Then:** the real Uplisting client + webhook `revalidateTag`.
+   variant set. Admin property/photo edits revalidate the `catalogue` tag.
+7. **Amenities (done):** `welkin_bliss_properties.amenity_keys` (array of canonical
+   keys; catalogue in `@welkinbliss/db`) — selected in the admin, driving the public
+   "What this home offers" list and the amenity-based collections. Admin-created
+   properties are now first-class there; only reviews/rating still fall back to the
+   curated set by slug (a separate feature), and per-property theme comes from the
+   destination.
+8. **Then:** the real Uplisting client + webhook `revalidateTag`.

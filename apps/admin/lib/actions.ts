@@ -1,6 +1,6 @@
 "use server";
 
-import { hasSupabase } from "@welkinbliss/db";
+import { hasSupabase, resolveAmenityKeys } from "@welkinbliss/db";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -72,6 +72,7 @@ function readPropertyInput(formData: FormData): PropertyInput {
     currency: str("currency") || "EUR",
     status: (str("status") || "draft") as PropertyStatus,
     uplistingPropertyId: str("uplistingPropertyId") || null,
+    amenityKeys: resolveAmenityKeys(formData.getAll("amenities").map(String)),
   };
 }
 
