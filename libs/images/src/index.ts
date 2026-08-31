@@ -1,11 +1,26 @@
 import "server-only";
-import sharp from "sharp";
+import type { Sharp } from "sharp";
 
 /**
  * Responsive variant generation for property photos (ADR 0002 §5). One original
  * upload → several widths × modern formats, so the public site serves the size
  * that fits the viewport/bandwidth. Server-only (native `sharp`).
+ *
+ * `sharp` is loaded lazily so merely importing this module never touches the native
+ * binary — a platform where the binary can't load (e.g. a mis-traced serverless
+ * function) fails only inside `generateVariants`, which callers already treat as
+ * best-effort (the original upload is kept without variants).
  */
+type SharpFactory = (input: Buffer, options?: { failOn?: "error" }) => Sharp;
+
+let sharpFactory: SharpFactory | null = null;
+async function loadSharp(): Promise<SharpFactory> {
+  if (!sharpFactory) {
+    const mod = (await import("sharp")) as unknown as { default: SharpFactory };
+    sharpFactory = mod.default;
+  }
+  return sharpFactory;
+}
 
 /** Target widths (px). Downscale only — never upscale past the source width. */
 export const PHOTO_WIDTHS = [480, 960, 1600, 2400] as const;
@@ -50,6 +65,7 @@ export async function generateVariants(input: Buffer, options: GenerateOptions =
   const widths = options.widths ?? PHOTO_WIDTHS;
   const formats = options.formats ?? PHOTO_FORMATS;
 
+  const sharp = await loadSharp();
   const base = sharp(input, { failOn: "error" }).rotate(); // honour EXIF orientation
   const meta = await base.metadata();
   const sourceWidth = meta.width ?? 0;
