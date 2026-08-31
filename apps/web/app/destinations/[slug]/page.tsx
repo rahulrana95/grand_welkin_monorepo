@@ -6,7 +6,7 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { getPropertiesInDestination } from "@/lib/catalogue";
 import { collectionsForDestination } from "@/lib/collections";
 import { DESTINATIONS, getDestination } from "@/lib/data";
-import { breadcrumbJsonLd, itemListJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, faqJsonLd, itemListJsonLd, type FaqItem } from "@/lib/seo";
 
 // ISR: destination pages are the long-tail SEO engine (docs 02 §1).
 export const revalidate = 3600;
@@ -42,6 +42,19 @@ export default async function DestinationPage({ params }: PageProps) {
     collectionsForDestination(slug),
   ]);
 
+  const faqs: readonly FaqItem[] = [
+    { question: `When is the best time to visit ${destination.name}?`, answer: destination.bestTime },
+    {
+      question: `How do I book a WelkinBliss home in ${destination.name}?`,
+      answer:
+        "Browse a home, choose your dates, and our concierge confirms the stay with you on WhatsApp — there's no online payment.",
+    },
+    {
+      question: `Does WelkinBliss own the homes in ${destination.name}?`,
+      answer: `Yes — every WelkinBliss home in ${destination.name} is one we own and care for directly, for hotel-grade consistency.`,
+    },
+  ];
+
   return (
     <>
       <JsonLd
@@ -52,6 +65,7 @@ export default async function DestinationPage({ params }: PageProps) {
             { name: destination.name },
           ]),
           itemListJsonLd(`Homes in ${destination.name}`, properties),
+          faqJsonLd(faqs),
         ]}
       />
 
@@ -100,6 +114,19 @@ export default async function DestinationPage({ params }: PageProps) {
         <div className="grid" style={{ marginTop: "1.25rem" }}>
           {properties.map((p) => (
             <PropertyCard key={p.slug} property={p} />
+          ))}
+        </div>
+      </section>
+
+      {/* Visible FAQ — must mirror the FAQPage JSON-LD for the rich result */}
+      <section className="container section" style={{ paddingTop: 0, maxWidth: 760 }}>
+        <h2>Good to know</h2>
+        <div style={{ marginTop: "1rem" }}>
+          {faqs.map((f) => (
+            <details key={f.question} className="card" style={{ padding: "1rem 1.2rem", marginBottom: "0.75rem" }}>
+              <summary style={{ fontWeight: 600, cursor: "pointer" }}>{f.question}</summary>
+              <p className="muted" style={{ margin: "0.6rem 0 0" }}>{f.answer}</p>
+            </details>
           ))}
         </div>
       </section>
