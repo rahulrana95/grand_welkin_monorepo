@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BookingPanel } from "@/components/BookingPanel";
 import { Chips } from "@/components/Chips";
+import { Icon, amenityIconFor } from "@/components/Icon";
 import { JsonLd } from "@/components/JsonLd";
 import { Photo } from "@/components/Photo";
 import { getProperties, getPropertyBySlug } from "@/lib/catalogue";
@@ -99,8 +100,11 @@ export default async function PropertyPage({ params }: PageProps) {
           <h2 style={{ marginTop: "2rem", fontSize: "1.6rem" }}>What this home offers</h2>
           <ul style={{ listStyle: "none", padding: 0, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "0.6rem" }}>
             {property.amenities.map((a) => (
-              <li key={a.schemaName} style={{ display: "flex", gap: "0.5rem" }}>
-                <span aria-hidden style={{ color: "var(--wb-accent)" }}>◆</span> {a.label}
+              <li key={a.schemaName} style={{ display: "flex", gap: "0.55rem", alignItems: "center" }}>
+                <span aria-hidden style={{ color: "var(--wb-primary)", display: "inline-flex" }}>
+                  <Icon name={amenityIconFor(a.schemaName)} size={20} />
+                </span>
+                {a.label}
               </li>
             ))}
           </ul>

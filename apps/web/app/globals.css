@@ -134,3 +134,18 @@ img { max-width: 100%; display: block; }
   .wb-search__field { border-bottom: 1px solid var(--wb-border); padding-bottom: 0.6rem; }
   .wb-search__submit { width: 100%; }
 }
+
+/* Property card — icon stats + amenity icons */
+.wb-stats { display: flex; gap: 1.1rem; color: var(--wb-text); }
+.wb-stat { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; }
+.wb-stat svg { color: var(--wb-primary); flex: none; }
+.wb-amenity-row {
+  list-style: none;
+  margin: 0.7rem 0 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  color: var(--wb-text-muted);
+}
+.wb-amenity-row li { display: inline-flex; align-items: center; }
