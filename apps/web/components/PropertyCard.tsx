@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Photo } from "./Photo";
-import { nightlyLine } from "@/lib/seo";
-import type { Property } from "@/lib/types";
+import { priceFormatted, type Property } from "@/lib/types";
 
 export function PropertyCard({ property }: { readonly property: Property }) {
   return (
@@ -27,11 +26,15 @@ export function PropertyCard({ property }: { readonly property: Property }) {
           </span>
         </div>
         <p className="muted" style={{ margin: "0.35rem 0 0.9rem" }}>{property.summary}</p>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "0.75rem" }}>
           <span className="muted" style={{ fontSize: "0.9rem" }}>
             Sleeps {property.sleeps} · {property.bedrooms} bed · {property.bathrooms} bath
           </span>
-          <strong>{nightlyLine(property)}</strong>
+          <div style={{ textAlign: "right", lineHeight: 1.15, whiteSpace: "nowrap" }}>
+            <span className="muted" style={{ display: "block", fontSize: "0.72rem", letterSpacing: "0.03em" }}>From</span>
+            <strong style={{ fontSize: "1.1rem" }}>{priceFormatted(property)}</strong>
+            <span className="muted" style={{ fontSize: "0.75rem" }}> /night</span>
+          </div>
         </div>
       </div>
     </article>
