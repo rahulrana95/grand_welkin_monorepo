@@ -1,7 +1,7 @@
 import Link from "next/link";
+import { Icon, amenityIconFor, type IconName } from "./Icon";
 import { Photo } from "./Photo";
-import { nightlyLine } from "@/lib/seo";
-import type { Property } from "@/lib/types";
+import { priceFormatted, type Property } from "@/lib/types";
 
 export function PropertyCard({ property }: { readonly property: Property }) {
   return (
@@ -22,18 +22,54 @@ export function PropertyCard({ property }: { readonly property: Property }) {
               {property.name}
             </Link>
           </h3>
-          <span aria-label={`Rated ${property.rating} out of 5`} style={{ whiteSpace: "nowrap", fontWeight: 600 }}>
-            ★ {property.rating.toFixed(1)}
-          </span>
+          {property.reviewCount > 0 ? (
+            <span
+              className="wb-rating"
+              aria-label={`Rated ${property.rating} out of 5 from ${property.reviewCount} reviews`}
+            >
+              <span aria-hidden style={{ color: "var(--wb-accent)" }}>★</span>
+              {property.rating.toFixed(1)}
+            </span>
+          ) : null}
         </div>
-        <p className="muted" style={{ margin: "0.35rem 0 0.9rem" }}>{property.summary}</p>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span className="muted" style={{ fontSize: "0.9rem" }}>
-            Sleeps {property.sleeps} · {property.bedrooms} bed · {property.bathrooms} bath
-          </span>
-          <strong>{nightlyLine(property)}</strong>
+        <p className="muted" style={{ margin: "0.35rem 0 0.8rem" }}>{property.summary}</p>
+
+        <div className="wb-stats" aria-label="Capacity">
+          <Stat icon="guests" value={property.sleeps} label={`Sleeps ${property.sleeps}`} />
+          <Stat icon="bed" value={property.bedrooms} label={`${property.bedrooms} bedrooms`} />
+          <Stat icon="bath" value={property.bathrooms} label={`${property.bathrooms} bathrooms`} />
+        </div>
+
+        {property.amenities.length > 0 ? (
+          <ul className="wb-amenity-row" aria-label="Amenities">
+            {property.amenities.slice(0, 4).map((a) => (
+              <li key={a.schemaName} title={a.label}>
+                <Icon name={amenityIconFor(a.schemaName)} label={a.label} size={17} />
+              </li>
+            ))}
+            {property.amenities.length > 4 ? (
+              <li className="muted" style={{ fontSize: "0.8rem" }}>+{property.amenities.length - 4}</li>
+            ) : null}
+          </ul>
+        ) : null}
+
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0.9rem", paddingTop: "0.8rem", borderTop: "1px solid var(--wb-border)" }}>
+          <div style={{ textAlign: "right", lineHeight: 1.15, whiteSpace: "nowrap" }}>
+            <span className="muted" style={{ display: "block", fontSize: "0.72rem", letterSpacing: "0.03em" }}>From</span>
+            <strong style={{ fontSize: "1.15rem" }}>{priceFormatted(property)}</strong>
+            <span className="muted" style={{ fontSize: "0.75rem" }}> /night</span>
+          </div>
         </div>
       </div>
     </article>
+  );
+}
+
+function Stat({ icon, value, label }: { readonly icon: IconName; readonly value: number; readonly label: string }) {
+  return (
+    <span className="wb-stat" aria-label={label}>
+      <Icon name={icon} />
+      <span>{value}</span>
+    </span>
   );
 }
