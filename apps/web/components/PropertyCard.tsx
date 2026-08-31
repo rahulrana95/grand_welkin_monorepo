@@ -22,9 +22,15 @@ export function PropertyCard({ property }: { readonly property: Property }) {
               {property.name}
             </Link>
           </h3>
-          <span aria-label={`Rated ${property.rating} out of 5`} style={{ whiteSpace: "nowrap", fontWeight: 600 }}>
-            ★ {property.rating.toFixed(1)}
-          </span>
+          {property.reviewCount > 0 ? (
+            <span
+              className="wb-rating"
+              aria-label={`Rated ${property.rating} out of 5 from ${property.reviewCount} reviews`}
+            >
+              <span aria-hidden style={{ color: "var(--wb-accent)" }}>★</span>
+              {property.rating.toFixed(1)}
+            </span>
+          ) : null}
         </div>
         <p className="muted" style={{ margin: "0.35rem 0 0.8rem" }}>{property.summary}</p>
 

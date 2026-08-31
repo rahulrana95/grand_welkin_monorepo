@@ -149,3 +149,18 @@ img { max-width: 100%; display: block; }
   color: var(--wb-text-muted);
 }
 .wb-amenity-row li { display: inline-flex; align-items: center; }
+
+/* Property card rating pill */
+.wb-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  color: var(--wb-text);
+  background: color-mix(in srgb, var(--wb-accent) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--wb-accent) 35%, transparent);
+}
