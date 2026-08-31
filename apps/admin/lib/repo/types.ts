@@ -28,6 +28,7 @@ export interface AdminProperty {
   readonly currency: string;
   readonly status: PropertyStatus;
   readonly uplistingPropertyId: string | null;
+  readonly amenityKeys: readonly string[];
   readonly photos: readonly PropertyPhoto[];
 }
 

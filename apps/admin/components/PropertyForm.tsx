@@ -1,3 +1,4 @@
+import { AMENITIES } from "@welkinbliss/db";
 import type { AdminProperty } from "@/lib/repo";
 
 interface PropertyFormProps {
@@ -9,6 +10,7 @@ interface PropertyFormProps {
 /** Shared create/edit form. Uncontrolled inputs → posted to a server action. */
 export function PropertyForm({ action, property, submitLabel }: PropertyFormProps) {
   const p = property;
+  const selected = new Set(p?.amenityKeys ?? []);
   return (
     <form action={action} className="card stack">
       {p ? <input type="hidden" name="id" value={p.id} /> : null}
@@ -53,6 +55,18 @@ export function PropertyForm({ action, property, submitLabel }: PropertyFormProp
 
       <Field label="Summary"><input className="input" name="summary" defaultValue={p?.summary ?? ""} /></Field>
       <Field label="Description"><textarea className="textarea" name="description" defaultValue={p?.description ?? ""} /></Field>
+
+      <fieldset style={{ border: "1px solid var(--wb-border)", borderRadius: 10, padding: "0.9rem 1rem", margin: 0 }}>
+        <legend style={{ fontSize: "0.85rem", fontWeight: 600, padding: "0 0.35rem" }}>Amenities</legend>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "0.4rem 1rem" }}>
+          {AMENITIES.map((a) => (
+            <label key={a.key} style={{ display: "flex", gap: "0.5rem", alignItems: "center", fontSize: "0.9rem" }}>
+              <input type="checkbox" name="amenities" value={a.key} defaultChecked={selected.has(a.key)} />
+              {a.label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       <div className="row">
         <button type="submit" className="btn btn--primary">{submitLabel}</button>

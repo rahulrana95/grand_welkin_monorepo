@@ -50,6 +50,7 @@ type PropertiesRow = {
   lat: number | null;
   lng: number | null;
   uplisting_property_id: string | null;
+  amenity_keys: string[];
   created_at: string;
   updated_at: string;
 };
@@ -104,7 +105,7 @@ export interface Database {
       welkin_bliss_users: Table<UsersRow, Insert<UsersRow, "id" | "created_at" | "type">, Partial<UsersRow>>;
       welkin_bliss_properties: Table<
         PropertiesRow,
-        Insert<PropertiesRow, "id" | "created_at" | "updated_at" | "lat" | "lng">,
+        Insert<PropertiesRow, "id" | "created_at" | "updated_at" | "lat" | "lng" | "amenity_keys">,
         Partial<PropertiesRow>
       >;
       welkin_bliss_property_photos: Table<PhotosRow, Insert<PhotosRow, "id" | "created_at">, Partial<PhotosRow>>;
