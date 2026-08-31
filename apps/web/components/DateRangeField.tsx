@@ -75,11 +75,10 @@ export function DateRangeField({ nameFrom, nameTo, ariaLabel, onChange }: DateRa
         aria-label={ariaLabel}
         onClick={() => setOpen((o) => !o)}
         style={{
-          display: "flex",
+          display: "inline-flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
           gap: "0.35rem",
-          width: "100%",
           border: "none",
           background: "transparent",
           font: "inherit",

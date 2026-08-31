@@ -79,7 +79,7 @@ export function Combobox({ name, options, placeholder, defaultValue = "", ariaLa
   return (
     <div ref={rootRef} style={{ position: "relative" }}>
       <input type="hidden" name={name} value={value} />
-      <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "0.35rem" }}>
         <input
           role="combobox"
           aria-expanded={open}
@@ -181,7 +181,8 @@ const fieldInput: React.CSSProperties = {
   background: "transparent",
   font: "inherit",
   color: "var(--wb-text)",
-  width: "100%",
+  width: "auto",
+  minWidth: 0,
   padding: "0.15rem 0",
   outline: "none",
 };

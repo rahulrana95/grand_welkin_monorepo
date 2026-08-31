@@ -5,6 +5,7 @@ import { useState } from "react";
 import { DESTINATIONS } from "@/lib/data";
 import { Combobox, type ComboboxOption } from "./Combobox";
 import { DateRangeField } from "./DateRangeField";
+import { GuestsField } from "./GuestsField";
 
 /**
  * Emotional, low-commitment search (Wander's "Whenever / Whoever" pattern — docs 01).
@@ -21,12 +22,14 @@ export function SearchBar() {
   const router = useRouter();
   const [where, setWhere] = useState("");
   const [range, setRange] = useState<{ from: string; to: string }>({ from: "", to: "" });
+  const [guests, setGuests] = useState(2);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
     if (range.from) params.set("from", range.from);
     if (range.to) params.set("to", range.to);
+    if (guests > 0) params.set("guests", String(guests));
     const qs = params.toString() ? `?${params.toString()}` : "";
     router.push(`${where ? `/destinations/${where}` : "/explore"}${qs}`);
   };
@@ -50,8 +53,8 @@ export function SearchBar() {
           onChange={(from, to) => setRange({ from, to })}
         />
       </Field>
-      <Field label="Whoever">
-        <input name="who" type="number" min={1} defaultValue={2} style={fieldInput} />
+      <Field label="Who's coming">
+        <GuestsField ariaLabel="Guests" onChange={setGuests} />
       </Field>
       <button type="submit" className="btn btn--primary wb-search__submit">
         Explore
@@ -60,21 +63,11 @@ export function SearchBar() {
   );
 }
 
-const fieldInput: React.CSSProperties = {
-  border: "none",
-  background: "transparent",
-  font: "inherit",
-  color: "var(--wb-text)",
-  width: "100%",
-  padding: "0.15rem 0",
-  outline: "none",
-};
-
 function Field({ label, children }: { readonly label: string; readonly children: React.ReactNode }) {
   return (
-    <label className="wb-search__field">
+    <div className="wb-search__field">
       <span className="eyebrow" style={{ fontSize: "0.68rem" }}>{label}</span>
       {children}
-    </label>
+    </div>
   );
 }
