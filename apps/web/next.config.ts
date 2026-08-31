@@ -5,7 +5,9 @@ import type { NextConfig } from "next";
  */
 const nextConfig: NextConfig = {
   // Self-contained server for small, portable Docker images (own-cloud SSR).
-  output: "standalone",
+  // NOT on Vercel — `output: "standalone"` makes page routes 404 there (Vercel
+  // expects its default output). Vercel sets VERCEL=1; Docker builds keep it.
+  ...(process.env.VERCEL ? {} : { output: "standalone" as const }),
   reactStrictMode: true,
   poweredByHeader: false,
 
