@@ -7,8 +7,16 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   transpilePackages: ["@welkinbliss/ui", "@welkinbliss/db", "@welkinbliss/images"],
-  // `sharp` is a native module — keep it external to the server bundle.
+  // `sharp` is a native module — keep it external to the server bundle, and force
+  // its native binary into the traced serverless function (pnpm nests it under
+  // .pnpm, which Vercel's tracing can otherwise miss → "could not load sharp").
   serverExternalPackages: ["sharp"],
+  outputFileTracingIncludes: {
+    "/**": [
+      "../../node_modules/.pnpm/@img+*/node_modules/@img/**",
+      "../../node_modules/.pnpm/sharp@*/node_modules/sharp/**",
+    ],
+  },
   experimental: {
     // Photo uploads post raw image bytes through a Server Action.
     serverActions: { bodySizeLimit: "15mb" },
