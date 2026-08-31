@@ -48,12 +48,18 @@ export const breadcrumbJsonLd = (crumbs: readonly Crumb[]): JsonLd => ({
 
 export const propertyJsonLd = (property: Property, destination: Destination): JsonLd => {
   const url = absoluteUrl(`/villa/${property.slug}`);
+  // Real photos when present; otherwise the property's generated OG image.
+  const image =
+    property.images && property.images.length > 0
+      ? property.images.map((img) => img.src)
+      : [absoluteUrl(`/villa/${property.slug}/opengraph-image`)];
   return {
     "@context": "https://schema.org",
     "@type": ["Product", "VacationRental"],
     "@id": `${url}#property`,
     name: `${property.name} — ${destination.name}`,
     description: property.summary,
+    image,
     brand: { "@type": "Brand", name: SITE.name },
     url,
     latitude: property.lat,
@@ -76,20 +82,26 @@ export const propertyJsonLd = (property: Property, destination: Destination): Js
         value: true,
       })),
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: property.rating,
-      reviewCount: property.reviewCount,
-      bestRating: 5,
-      worstRating: 1,
-    },
-    review: property.reviews.map((r) => ({
-      "@type": "Review",
-      author: { "@type": "Person", name: r.author },
-      datePublished: r.date,
-      reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5 },
-      reviewBody: r.body,
-    })),
+    // Only emit rating/reviews when there ARE reviews — an AggregateRating with
+    // reviewCount 0 is invalid and flagged in Search Console.
+    ...(property.reviewCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: property.rating,
+            reviewCount: property.reviewCount,
+            bestRating: 5,
+            worstRating: 1,
+          },
+          review: property.reviews.map((r) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.author },
+            datePublished: r.date,
+            reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5 },
+            reviewBody: r.body,
+          })),
+        }
+      : {}),
     offers: {
       "@type": "Offer",
       priceCurrency: property.currency,
@@ -111,6 +123,22 @@ export const itemListJsonLd = (name: string, properties: readonly Property[]): J
     position: i + 1,
     url: absoluteUrl(`/villa/${p.slug}`),
     name: p.name,
+  })),
+});
+
+export interface FaqItem {
+  readonly question: string;
+  readonly answer: string;
+}
+
+/** FAQPage — rich-result eligibility. The Q&A MUST also be visible on the page. */
+export const faqJsonLd = (items: readonly FaqItem[]): JsonLd => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: items.map((i) => ({
+    "@type": "Question",
+    name: i.question,
+    acceptedAnswer: { "@type": "Answer", text: i.answer },
   })),
 });
 

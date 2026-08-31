@@ -35,6 +35,11 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image", title: SITE.name, description: SITE.description },
   robots: { index: true, follow: true },
+  // Google Search Console verification — set GOOGLE_SITE_VERIFICATION in the env
+  // (Vercel / .env.local). Absent → no tag emitted; verify via DNS instead.
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 export default function RootLayout({ children }: { readonly children: React.ReactNode }) {
