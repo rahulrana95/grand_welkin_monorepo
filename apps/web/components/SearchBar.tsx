@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DESTINATIONS } from "@/lib/data";
 import { Combobox, type ComboboxOption } from "./Combobox";
+import { DateRangeField } from "./DateRangeField";
 
 /**
  * Emotional, low-commitment search (Wander's "Whenever / Whoever" pattern — docs 01).
@@ -19,10 +20,15 @@ const DESTINATION_OPTIONS: readonly ComboboxOption[] = DESTINATIONS.map((d) => (
 export function SearchBar() {
   const router = useRouter();
   const [where, setWhere] = useState("");
+  const [range, setRange] = useState<{ from: string; to: string }>({ from: "", to: "" });
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push(where ? `/destinations/${where}` : "/explore");
+    const params = new URLSearchParams();
+    if (range.from) params.set("from", range.from);
+    if (range.to) params.set("to", range.to);
+    const qs = params.toString() ? `?${params.toString()}` : "";
+    router.push(`${where ? `/destinations/${where}` : "/explore"}${qs}`);
   };
 
   return (
@@ -37,7 +43,12 @@ export function SearchBar() {
         />
       </Field>
       <Field label="Whenever">
-        <input name="when" placeholder="Flexible" style={fieldInput} />
+        <DateRangeField
+          nameFrom="from"
+          nameTo="to"
+          ariaLabel="Check-in and check-out dates"
+          onChange={(from, to) => setRange({ from, to })}
+        />
       </Field>
       <Field label="Whoever">
         <input name="who" type="number" min={1} defaultValue={2} style={fieldInput} />
