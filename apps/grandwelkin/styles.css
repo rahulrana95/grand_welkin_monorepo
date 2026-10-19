@@ -84,13 +84,28 @@ h3 { font-size: 1.12rem; margin: 0; }
 .grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
 .grid-3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
 
-.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 10px; overflow-wrap: anywhere; }
+.card { position: relative; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 10px; overflow-wrap: anywhere; }
 .card p { margin: 0; }
+
+/* Category icon tile (placeholder art — swap for real icons later) */
+.card-icon { width: 46px; height: 46px; border-radius: 12px; flex: none; display: inline-flex; align-items: center; justify-content: center; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); margin-bottom: 2px; }
+.card-icon svg { width: 24px; height: 24px; }
+.card[data-accent="violet"] .card-icon { color: #7c3aed; background: color-mix(in srgb, #7c3aed 14%, transparent); }
+@media (prefers-color-scheme: dark) { .card[data-accent="violet"] .card-icon { color: #a78bfa; background: color-mix(in srgb, #a78bfa 16%, transparent); } }
+
+/* Live cards are clickable (whole card -> site in a new tab) */
+.card-live { transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
+.card-live:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); box-shadow: 0 10px 30px -18px rgba(0,0,0,.45); transform: translateY(-2px); }
+.card-link { color: var(--text); text-decoration: none; }
+.card-link:hover { color: var(--accent); }
+.card-link::after { content: ""; position: absolute; inset: 0; border-radius: 14px; }
+.relink { position: relative; z-index: 1; }  /* keep the support email clickable above the stretched link */
+@media (prefers-reduced-motion: reduce) { .card-live { transition: none; } .card-live:hover { transform: none; } }
+
 .card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px 10px; flex-wrap: wrap; }
 .card-meta { color: var(--muted); font-size: 0.9rem; }
 .card-meta a { color: var(--muted); word-break: break-all; }
-.visit { font-weight: 600; text-decoration: none; }
-.visit:hover { text-decoration: underline; }
+.visit { font-weight: 600; font-size: 0.95rem; color: var(--accent); margin-top: auto; }
 
 .badge { flex: none; font-size: 0.74rem; font-weight: 650; letter-spacing: 0.03em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 3px 9px; }
 .badge-live { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
