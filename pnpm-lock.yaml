@@ -67,6 +67,12 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  apps/grandwelkin-e2e:
+    devDependencies:
+      '@playwright/test':
+        specifier: 1.62.1
+        version: 1.62.1
+
   apps/web:
     dependencies:
       '@welkinbliss/availability':

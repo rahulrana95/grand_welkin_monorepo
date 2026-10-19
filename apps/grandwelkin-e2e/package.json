@@ -1,0 +1,13 @@
+{
+  "name": "@grandwelkin/e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "End-to-end tests for the static grandwelkin.com site (apps/grandwelkin).",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1"
+  }
+}

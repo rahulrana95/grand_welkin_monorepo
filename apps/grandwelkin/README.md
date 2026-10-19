@@ -78,6 +78,16 @@ chrome --headless=new --window-size=1200,630 --force-device-scale-factor=1 \
 - [ ] Validate the live page in Google's **Rich Results Test** (Organization JSON-LD)
       and check the share card with a link preview.
 
+## Tests
+End-to-end tests live in a separate package, `apps/grandwelkin-e2e/`, so this deploy
+folder stays pure static (no `package.json`). They run the critical journeys across
+mobile / tablet / desktop viewports (loads, landmarks + sections, live-card links open
+the site in a new tab, the copy-email button, Organization JSON-LD, and no horizontal
+scroll). CI runs them on every change (`.github/workflows/grandwelkin.yml`).
+```bash
+pnpm --filter @grandwelkin/e2e test:e2e
+```
+
 ## Privacy
 The site **sets no cookies and collects nothing** — no analytics, trackers, embeds or
 third-party scripts. This is stated on the page (the *Privacy* section). If you ever

@@ -1,0 +1,25 @@
+name: grandwelkin (site)
+
+# Static site (apps/grandwelkin) + its e2e suite (apps/grandwelkin-e2e).
+on:
+  pull_request:
+    paths: ["apps/grandwelkin/**", "apps/grandwelkin-e2e/**", "pnpm-lock.yaml"]
+  push:
+    branches: [main]
+    paths: ["apps/grandwelkin/**", "apps/grandwelkin-e2e/**"]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - name: e2e (mobile / tablet / desktop)
+        run: pnpm --filter @grandwelkin/e2e test:e2e
+        env: { CI: "true" }
