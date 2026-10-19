@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#312e81"/>
+  <g transform="translate(96, 150)">
+    <g transform="translate(0, 0)">
+      <path d="M0 150V60L60 18l60 42v90" fill="none" stroke="#ffffff" stroke-width="10" stroke-linejoin="round"/>
+      <path d="M38 150v-38a22 22 0 0 1 44 0v38" fill="none" stroke="#ffffff" stroke-width="10" stroke-linejoin="round"/>
+    </g>
+    <text x="150" y="118" font-family="DejaVu Sans, Verdana, sans-serif" font-size="78" font-weight="700" fill="#ffffff" letter-spacing="-1">Grand Welkin</text>
+  </g>
+  <text x="96" y="430" font-family="DejaVu Sans, Verdana, sans-serif" font-size="44" font-weight="400" fill="#c7d2fe">Fast, private web tools — from Bangalore.</text>
+  <text x="96" y="500" font-family="DejaVu Sans, Verdana, sans-serif" font-size="30" font-weight="400" fill="#a5b4fc">Free · runs in your browser · no sign-up · no tracking</text>
+</svg>
